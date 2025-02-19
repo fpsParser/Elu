@@ -3,6 +3,7 @@
 <head>
     <title>Авторизация</title>
     <style>
+        /* Ваши стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -157,7 +158,6 @@
             transition-delay: 0.75s;
         }
 
-        /* Стиль для текста переключения режимов */
         .switch {
             color: #4CAF50;
             cursor: pointer;
@@ -191,6 +191,7 @@
     <script>
         let isLoginMode = true;
         let holdTimeout; // Таймер для удержания кнопки
+        let isHoldingEnter = false; // Флаг для отслеживания удержания Enter
 
         // Функция для создания кнопки
         function createAuthButton() {
@@ -206,25 +207,36 @@
 
             // Обработчик начала удержания кнопки
             button.addEventListener('mousedown', () => {
-                holdTimeout = setTimeout(() => {
-                    button.classList.add('active'); // Запускаем анимацию
-                    handleAuth(); // Выполняем действие после удержания
-                }, 1500); // Удержание на 1.5 секунды
+                startHold();
             });
 
             // Обработчик отпускания кнопки
             button.addEventListener('mouseup', () => {
-                clearTimeout(holdTimeout); // Отменяем таймер, если кнопку отпустили раньше
-                button.classList.remove('active'); // Сбрасываем анимацию
+                cancelHold();
             });
 
             // Обработчик выхода курсора за пределы кнопки
             button.addEventListener('mouseleave', () => {
-                clearTimeout(holdTimeout); // Отменяем таймер, если курсор ушел с кнопки
-                button.classList.remove('active'); // Сбрасываем анимацию
+                cancelHold();
             });
 
             return button;
+        }
+
+        // Начать удержание (для кнопки и Enter)
+        function startHold() {
+            holdTimeout = setTimeout(() => {
+                const button = document.querySelector('.push-button');
+                button.classList.add('active'); // Запускаем анимацию
+                handleAuth(); // Выполняем действие после удержания
+            }, 1200); // Удержание на 1.2 секунды
+        }
+
+        // Отменить удержание (для кнопки и Enter)
+        function cancelHold() {
+            clearTimeout(holdTimeout); // Отменяем таймер
+            const button = document.querySelector('.push-button');
+            button.classList.remove('active'); // Сбрасываем анимацию
         }
 
         // Переключение между авторизацией и регистрацией
@@ -296,6 +308,20 @@
 
             // Обработчик для переключения режима
             switchModeButton.addEventListener('click', switchMode);
+
+            // Обработчик для клавиши Enter
+            const pinInput = document.getElementById('pin');
+            const usernameInput = document.getElementById('username');
+
+            const handleEnterKey = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Предотвращаем стандартное поведение
+                    handleAuth(); // Вызываем функцию авторизации/регистрации
+                }
+            };
+
+            pinInput.addEventListener('keydown', handleEnterKey);
+            usernameInput.addEventListener('keydown', handleEnterKey);
         });
     </script>
 </body>
