@@ -309,7 +309,7 @@
             // Обработчик для переключения режима
             switchModeButton.addEventListener('click', switchMode);
 
-            // Обработчик для клавиши Enter
+            // Обработчик для клавиши Enter в полях ввода
             const pinInput = document.getElementById('pin');
             const usernameInput = document.getElementById('username');
 
@@ -322,6 +322,14 @@
 
             pinInput.addEventListener('keydown', handleEnterKey);
             usernameInput.addEventListener('keydown', handleEnterKey);
+
+            // Глобальный обработчик для Enter на всей странице
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Предотвращаем стандартное поведение
+                    handleAuth(); // Вызываем функцию авторизации/регистрации
+                }
+            });
         });
     </script>
 </body>
