@@ -23,24 +23,151 @@
             text-align: center;
         }
 
+        .auth-form input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #3a3a3a;
+            border-radius: 5px;
+            background-color: #2e2e2e;
+            color: #d1d1d1;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .auth-form input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        .error {
+            color: #a33a3a;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #d1d1d1;
+            font-size: 18px;
+            opacity: 0.7;
+        }
+
+        .toggle-password:hover {
+            opacity: 1;
+        }
+
         .push-button {
             border-radius: 12px;
             border: none;
+            position: relative;
+            display: inline-block;
             width: 80%;
             padding: 10px 20px;
             color: #4CAF50;
             text-transform: uppercase;
+            letter-spacing: 4px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+            font-family: Verdana, sans-serif;
             font-size: 16px;
             font-weight: bold;
+            text-decoration: none;
             background: linear-gradient(160deg, #2e2e2e, #242424);
+            text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+            transition: 0.2s;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: box-shadow 1s ease-in-out;
+            margin: 10px 0;
         }
 
-        .push-button.active {
+        .push-button:active {
+            border: 3px outset #81C784;
+            color: #81C784;
+            background: linear-gradient(160deg, #2e2e2e, #242424);
+            text-shadow: 0px 0px 4px #81C784;
             box-shadow: 0 0 10px #81C784, 0 0 40px #81C784, 0 0 80px #81C784;
+            transition-delay: 1s;
+        }
+
+        .push-button span {
+            position: absolute;
+            display: block;
+        }
+
+        .push-button span:nth-child(1) {
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4CAF50);
+        }
+
+        .push-button:active span:nth-child(1) {
+            left: 100%;
+            transition: 1s;
+        }
+
+        .push-button span:nth-child(2) {
+            top: -100%;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #4CAF50);
+        }
+
+        .push-button:active span:nth-child(2) {
+            top: 100%;
+            transition: 1s;
+            transition-delay: 0.25s;
+        }
+
+        .push-button span:nth-child(3) {
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(270deg, transparent, #4CAF50);
+        }
+
+        .push-button:active span:nth-child(3) {
+            right: 100%;
+            transition: 1s;
+            transition-delay: 0.5s;
+        }
+
+        .push-button span:nth-child(4) {
+            bottom: -100%;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(360deg, transparent, #4CAF50);
+        }
+
+        .push-button:active span:nth-child(4) {
+            bottom: 100%;
+            transition: 1s;
+            transition-delay: 0.75s;
+        }
+
+        /* Стиль для текста переключения режимов */
+        .switch {
+            color: #4CAF50;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .switch:hover {
+            color: #81C784;
         }
     </style>
 </head>
@@ -48,75 +175,123 @@
     <div class="auth-form">
         <h2 id="form-title">Авторизация</h2>
         <input type="text" id="username" placeholder="Логин" required>
-        <input type="password" id="pin" placeholder="Пин-код" minlength="4" required>
+        <div class="password-container">
+            <input type="password" id="pin" placeholder="Пин-код" minlength="4" required>
+            <span class="toggle-password" onclick="togglePassword()">🕶️</span>
+        </div>
+
+        <!-- Контейнер для кнопки -->
         <div id="auth-button-container"></div>
+
+        <!-- Текст для переключения режимов -->
         <div class="switch" id="switch-mode">Зарегистрироваться</div>
         <div id="error" class="error"></div>
     </div>
 
     <script>
         let isLoginMode = true;
+        let isAnimating = false; // Флаг для блокировки кнопки во время анимации
 
+        // Функция для создания кнопки
         function createAuthButton() {
             const button = document.createElement('button');
             button.className = 'push-button';
-            button.textContent = isLoginMode ? 'Войти' : 'Регистрация';
+            button.innerHTML = `
+                ${isLoginMode ? 'Войти' : 'Регистрация'}
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            `;
 
+            // Обработчик клика
             button.addEventListener('click', () => {
-                if (button.classList.contains('active')) return;
+                if (isAnimating) return; // Если анимация уже идет, ничего не делаем
+
+                // Запускаем анимацию
+                isAnimating = true; // Блокируем кнопку
                 button.classList.add('active');
+
+                // Ждем завершения анимации (1 секунда)
                 setTimeout(() => {
-                    handleAuth();
-                    button.classList.remove('active');
-                }, 1000);
+                    handleAuth(); // Выполняем действие после анимации
+                    isAnimating = false; // Разблокируем кнопку
+                    button.classList.remove('active'); // Сбрасываем анимацию
+                }, 1000); // Задержка равна длительности анимации
             });
 
             return button;
         }
 
+        // Переключение между авторизацией и регистрацией
         function switchMode() {
             isLoginMode = !isLoginMode;
             document.getElementById('form-title').textContent = isLoginMode ? 'Авторизация' : 'Регистрация';
             document.getElementById('switch-mode').textContent = isLoginMode ? 'Зарегистрироваться' : 'Войти';
+
+            // Пересоздаем кнопку
             const authButtonContainer = document.getElementById('auth-button-container');
-            authButtonContainer.innerHTML = '';
-            authButtonContainer.appendChild(createAuthButton());
+            authButtonContainer.innerHTML = ''; // Очищаем контейнер
+            authButtonContainer.appendChild(createAuthButton()); // Добавляем новую кнопку
         }
 
+        // Показать/скрыть пин-код
+        function togglePassword() {
+            const pinInput = document.getElementById('pin');
+            const toggleIcon = document.querySelector('.toggle-password');
+            if (pinInput.type === 'password') {
+                pinInput.type = 'text';
+                toggleIcon.textContent = '👁️';
+            } else {
+                pinInput.type = 'password';
+                toggleIcon.textContent = '🕶️';
+            }
+        }
+
+        // Обработка авторизации/регистрации
         async function handleAuth() {
             const username = document.getElementById('username').value;
             const pin = document.getElementById('pin').value;
-            const errorDiv = document.getElementById('error');
 
             if (!username || !pin) {
-                errorDiv.textContent = 'Заполните все поля!';
+                document.getElementById('error').textContent = 'Заполните все поля!';
                 return;
             }
 
             if (pin.length < 4) {
-                errorDiv.textContent = 'Пин-код должен содержать минимум 4 символа!';
+                document.getElementById('error').textContent = 'Пин-код должен содержать минимум 4 символа!';
                 return;
             }
 
             const endpoint = isLoginMode ? '/login' : '/register';
             const response = await fetch(endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ username, pin }),
             });
 
             const result = await response.json();
+
             if (result.success) {
                 localStorage.setItem('username', username);
                 window.location.href = '/';
             } else {
-                errorDiv.textContent = result.message;
+                document.getElementById('error').textContent = result.message;
             }
         }
 
+        // Назначаем обработчики событий после загрузки страницы
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('auth-button-container').appendChild(createAuthButton());
-            document.getElementById('switch-mode').addEventListener('click', switchMode);
+            const switchModeButton = document.getElementById('switch-mode');
+
+            // Инициализация кнопки
+            const authButtonContainer = document.getElementById('auth-button-container');
+            authButtonContainer.appendChild(createAuthButton());
+
+            // Обработчик для переключения режима
+            switchModeButton.addEventListener('click', switchMode);
         });
     </script>
 </body>
