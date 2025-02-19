@@ -190,7 +190,7 @@
 
     <script>
         let isLoginMode = true;
-        let isAnimating = false; // Флаг для блокировки кнопки во время анимации
+        let holdTimeout; // Таймер для удержания кнопки
 
         // Функция для создания кнопки
         function createAuthButton() {
@@ -204,20 +204,24 @@
                 <span></span>
             `;
 
-            // Обработчик клика
-            button.addEventListener('click', () => {
-                if (isAnimating) return; // Если анимация уже идет, ничего не делаем
+            // Обработчик начала удержания кнопки
+            button.addEventListener('mousedown', () => {
+                holdTimeout = setTimeout(() => {
+                    button.classList.add('active'); // Запускаем анимацию
+                    handleAuth(); // Выполняем действие после удержания
+                }, 1500); // Удержание на 1.5 секунды
+            });
 
-                // Запускаем анимацию
-                isAnimating = true; // Блокируем кнопку
-                button.classList.add('active');
+            // Обработчик отпускания кнопки
+            button.addEventListener('mouseup', () => {
+                clearTimeout(holdTimeout); // Отменяем таймер, если кнопку отпустили раньше
+                button.classList.remove('active'); // Сбрасываем анимацию
+            });
 
-                // Ждем завершения анимации (1 секунда)
-                setTimeout(() => {
-                    handleAuth(); // Выполняем действие после анимации
-                    isAnimating = false; // Разблокируем кнопку
-                    button.classList.remove('active'); // Сбрасываем анимацию
-                }, 1000); // Задержка равна длительности анимации
+            // Обработчик выхода курсора за пределы кнопки
+            button.addEventListener('mouseleave', () => {
+                clearTimeout(holdTimeout); // Отменяем таймер, если курсор ушел с кнопки
+                button.classList.remove('active'); // Сбрасываем анимацию
             });
 
             return button;
