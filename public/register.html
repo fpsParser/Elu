@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Регистрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+        .register-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .register-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .register-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-form">
+        <h2>Регистрация</h2>
+        <input type="text" id="username" placeholder="Введите ваш ник">
+        <input type="password" id="pin" placeholder="Введите пин-код">
+        <button onclick="register()">Зарегистрироваться</button>
+    </div>
+
+    <script>
+        function register() {
+            const username = document.getElementById('username').value;
+            const pin = document.getElementById('pin').value;
+
+            if (username && pin) {
+                localStorage.setItem('username', username);
+                localStorage.setItem('pin', pin);
+                window.location.href = '/';
+            } else {
+                alert('Заполните все поля!');
+            }
+        }
+    </script>
+</body>
+</html>

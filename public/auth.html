@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Авторизация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #181818;
+            color: #d1d1d1;
+        }
+
+        .auth-form {
+            background-color: #242424;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .push-button {
+            border-radius: 12px;
+            border: none;
+            width: 80%;
+            padding: 10px 20px;
+            color: #4CAF50;
+            text-transform: uppercase;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(160deg, #2e2e2e, #242424);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 1s ease-in-out;
+        }
+
+        .push-button.active {
+            box-shadow: 0 0 10px #81C784, 0 0 40px #81C784, 0 0 80px #81C784;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-form">
+        <h2 id="form-title">Авторизация</h2>
+        <input type="text" id="username" placeholder="Логин" required>
+        <input type="password" id="pin" placeholder="Пин-код" minlength="4" required>
+        <div id="auth-button-container"></div>
+        <div class="switch" id="switch-mode">Зарегистрироваться</div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+
+        function createAuthButton() {
+            const button = document.createElement('button');
+            button.className = 'push-button';
+            button.textContent = isLoginMode ? 'Войти' : 'Регистрация';
+
+            button.addEventListener('click', () => {
+                if (button.classList.contains('active')) return;
+                button.classList.add('active');
+                setTimeout(() => {
+                    handleAuth();
+                    button.classList.remove('active');
+                }, 1000);
+            });
+
+            return button;
+        }
+
+        function switchMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('form-title').textContent = isLoginMode ? 'Авторизация' : 'Регистрация';
+            document.getElementById('switch-mode').textContent = isLoginMode ? 'Зарегистрироваться' : 'Войти';
+            const authButtonContainer = document.getElementById('auth-button-container');
+            authButtonContainer.innerHTML = '';
+            authButtonContainer.appendChild(createAuthButton());
+        }
+
+        async function handleAuth() {
+            const username = document.getElementById('username').value;
+            const pin = document.getElementById('pin').value;
+            const errorDiv = document.getElementById('error');
+
+            if (!username || !pin) {
+                errorDiv.textContent = 'Заполните все поля!';
+                return;
+            }
+
+            if (pin.length < 4) {
+                errorDiv.textContent = 'Пин-код должен содержать минимум 4 символа!';
+                return;
+            }
+
+            const endpoint = isLoginMode ? '/login' : '/register';
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, pin }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                localStorage.setItem('username', username);
+                window.location.href = '/';
+            } else {
+                errorDiv.textContent = result.message;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('auth-button-container').appendChild(createAuthButton());
+            document.getElementById('switch-mode').addEventListener('click', switchMode);
+        });
+    </script>
+</body>
+</html>

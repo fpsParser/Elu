@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Личные сообщения</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #181818;
+            color: #d1d1d1;
+        }
+        #sidebar {
+            width: 300px;
+            background-color: #242424;
+            padding: 10px;
+            border-right: 1px solid #3a3a3a;
+        }
+        #current-user {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        #search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #3a3a3a;
+            border-radius: 5px;
+            background-color: #2e2e2e;
+            color: #d1d1d1;
+        }
+        #chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        #header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #242424;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        #messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        #messageInput {
+            display: flex;
+            padding: 10px;
+            background-color: #242424;
+        }
+        #message {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #3a3a3a;
+            border-radius: 5px;
+            background-color: #2e2e2e;
+            color: #d1d1d1;
+        }
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            background-color: #4a4a4a;
+            color: #d1d1d1;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #5a5a5a;
+        }
+        #logout-btn {
+            background-color: #a33a3a;
+        }
+        #logout-btn:hover {
+            background-color: #922b2b;
+        }
+        .user-list {
+            margin-top: 10px;
+        }
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #3a3a3a;
+            cursor: pointer;
+        }
+        .user-item:hover {
+            background-color: #2e2e2e;
+        }
+        .add-user-btn {
+            background-color: #4a4a4a;
+            border: none;
+            color: #d1d1d1;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .add-user-btn:hover {
+            background-color: #5a5a5a;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 70%;
+        }
+        .message.me {
+            background-color: #3a7d3a;
+            margin-left: auto;
+        }
+        .message.other {
+            background-color: #2e2e2e;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <div id="current-user">Вы вошли как: <span id="username-display"></span></div>
+        <h2>Поиск</h2>
+        <input type="text" id="search" placeholder="Введите ник">
+        <button onclick="searchUser()">Найти</button>
+        <div id="search-result"></div>
+        <div class="user-list" id="user-list"></div>
+    </div>
+    <div id="chat">
+        <div id="header">
+            <h1 id="chat-title">Личные сообщения</h1>
+            <button id="logout-btn" onclick="logout()">Выйти</button>
+        </div>
+        <ul id="messages"></ul>
+        <div id="messageInput">
+            <input id="message" type="text" placeholder="Введите сообщение">
+            <button onclick="sendMessage()">Отправить</button>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        const username = localStorage.getItem('username');
+
+        if (!username) {
+            window.location.href = '/auth.html';
+        }
+
+        // Отображаем текущего пользователя
+        document.getElementById('username-display').textContent = username;
+
+        // Загружаем данные из localStorage
+        let userContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+        let userMessages = JSON.parse(localStorage.getItem('messages')) || {};
+
+        // Регистрируем пользователя на сервере
+        socket.emit('register-user', username);
+
+        // Обновляем список ЛС
+        updateUserList();
+
+        let currentChatUser = null;
+
+        function searchUser() {
+            const searchUsername = document.getElementById('search').value;
+
+            fetch('/search-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: searchUsername }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const user = data.user.username;
+                    document.getElementById('search-result').innerHTML = `
+                        <div class="user-item">
+                            <span>${user}</span>
+                            <button class="add-user-btn" onclick="addUser('${user}')">+</button>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('search-result').textContent = data.message;
+                }
+            });
+        }
+
+        function addUser(user) {
+            if (!userContacts.includes(user)) {
+                fetch('/add-contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, contact: user }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        userContacts.push(user);
+                        localStorage.setItem('contacts', JSON.stringify(userContacts));
+                        updateUserList();
+                        document.getElementById('search').value = ''; // Очищаем поле поиска
+                        document.getElementById('search-result').innerHTML = ''; // Очищаем результат поиска
+                    }
+                });
+            }
+        }
+
+        function updateUserList() {
+            const userListElement = document.getElementById('user-list');
+            userListElement.innerHTML = userContacts.map(user => `
+                <div class="user-item" onclick="selectUser('${user}')">
+                    <span>${user}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectUser(user) {
+            currentChatUser = user;
+            document.getElementById('chat-title').textContent = `Чат с ${user}`;
+            loadMessages(user);
+        }
+
+        function loadMessages(user) {
+            const messagesElement = document.getElementById('messages');
+            messagesElement.innerHTML = (userMessages[user] || []).map(msg => `
+                <div class="message ${msg.from === username ? 'me' : 'other'}">
+                    ${msg.message}
+                </div>
+            `).join('');
+            messagesElement.scrollTop = messagesElement.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            if (message && currentChatUser) {
+                socket.emit('private-message', {
+                    from: username,
+                    to: currentChatUser,
+                    message,
+                });
+
+                if (!userMessages[currentChatUser]) {
+                    userMessages[currentChatUser] = [];
+                }
+                userMessages[currentChatUser].push({ from: username, message });
+                localStorage.setItem('messages', JSON.stringify(userMessages));
+
+                document.getElementById('message').value = '';
+                loadMessages(currentChatUser);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('username');
+            localStorage.removeItem('contacts');
+            localStorage.removeItem('messages');
+            window.location.href = '/auth.html';
+        }
+
+        document.getElementById('message').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        socket.on('private-message', (data) => {
+            if (!userMessages[data.from]) {
+                userMessages[data.from] = [];
+            }
+            userMessages[data.from].push(data);
+            localStorage.setItem('messages', JSON.stringify(userMessages));
+
+            if (data.from === currentChatUser) {
+                loadMessages(currentChatUser);
+            } else {
+                // Если это новое сообщение от пользователя, которого нет в текущем чате, добавляем его в список контактов
+                if (!userContacts.includes(data.from)) {
+                    userContacts.push(data.from);
+                    localStorage.setItem('contacts', JSON.stringify(userContacts));
+                    updateUserList();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
