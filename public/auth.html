@@ -22,6 +22,8 @@
             width: 300px;
             text-align: center;
             transition: opacity 0.5s ease-in-out;
+            position: relative; /* Добавлено для z-index */
+            z-index: 1; /* Форма поверх спиннера */
         }
 
         .auth-form.hidden {
@@ -185,10 +187,13 @@
             left: calc(50% - 49px);
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
+            display: none; /* Скрываем спиннер по умолчанию */
+            z-index: 2; /* Спиннер поверх формы */
         }
 
         .cssload-bell.visible {
             opacity: 1;
+            display: block; /* Показываем спиннер */
         }
 
         .cssload-circle {
@@ -385,10 +390,10 @@
                 // Сохраняем имя пользователя
                 localStorage.setItem('username', username);
 
-                // Ждем 3.5 секунды (для демонстрации анимации)
+                // Ждем 3 секунды (для демонстрации анимации)
                 setTimeout(() => {
                     window.location.href = '/';
-                }, 3000); // Изменили с 2000 на 3500
+                }, 3000); // 3 секунды
             } else {
                 document.getElementById('error').textContent = result.message;
             }

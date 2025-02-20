@@ -578,5 +578,11 @@
     "pin": "1234",
     "contacts": [],
     "messages": {}
+  },
+  {
+    "username": "2",
+    "pin": "1234",
+    "contacts": [],
+    "messages": {}
   }
 ]
