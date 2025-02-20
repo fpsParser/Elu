@@ -3,7 +3,6 @@
 <head>
     <title>Авторизация</title>
     <style>
-        /* Ваши стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -22,6 +21,12 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
             text-align: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .auth-form.hidden {
+            opacity: 0;
+            pointer-events: none; /* Отключаем взаимодействие с формой */
         }
 
         .auth-form input {
@@ -164,12 +169,80 @@
             text-decoration: underline;
             margin-top: 10px;
             font-size: 14px;
-            display: inline-block; /* Добавлено для уменьшения области клика */
-            padding: 5px; /* Добавлено для уменьшения области клика */
+            display: inline-block;
+            padding: 5px;
         }
 
         .switch:hover {
             color: #81C784;
+        }
+
+        .cssload-bell {
+            width: 97px;
+            height: 99px;
+            border-radius: 100%;
+            position: absolute;
+            left: calc(50% - 49px);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .cssload-bell.visible {
+            opacity: 1;
+        }
+
+        .cssload-circle {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+
+        .cssload-circle .cssload-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            border: 5px solid rgba(76,175,80,0.7);
+            border-right: none;
+            border-top: none;
+            background-clip: padding;
+            box-shadow: inset 0px 0px 10px rgba(0, 255, 170, 0.15);
+        }
+
+        .cssload-circle:nth-of-type(0) {
+            transform: rotate(0deg);
+        }
+
+        .cssload-circle:nth-of-type(0) .cssload-inner {
+            animation: cssload-spin 2.3s infinite linear;
+        }
+
+        .cssload-circle:nth-of-type(1) {
+            transform: rotate(70deg);
+        }
+
+        .cssload-circle:nth-of-type(1) .cssload-inner {
+            animation: cssload-spin 2.3s infinite linear;
+        }
+
+        .cssload-circle:nth-of-type(2) {
+            transform: rotate(140deg);
+        }
+
+        .cssload-circle:nth-of-type(2) .cssload-inner {
+            animation: cssload-spin 2.3s infinite linear;
+        }
+
+        .cssload-bell {
+            animation: cssload-spin 5.75s infinite linear;
+        }
+
+        @keyframes cssload-spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -190,11 +263,29 @@
         <div id="error" class="error"></div>
     </div>
 
+    <!-- Спиннер -->
+    <div class="cssload-bell">
+        <div class="cssload-circle">
+            <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+            <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+            <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+            <div class="cssload-inner"></div>
+        </div>
+        <div class="cssload-circle">
+            <div class="cssload-inner"></div>
+        </div>
+    </div>
+
     <script>
         let isLoginMode = true;
-        let holdTimeout; // Таймер для удержания кнопки
+        let holdTimeout;
 
-        // Функция для создания кнопки
         function createAuthButton() {
             const button = document.createElement('button');
             button.className = 'push-button';
@@ -206,17 +297,14 @@
                 <span></span>
             `;
 
-            // Обработчик начала удержания кнопки
             button.addEventListener('mousedown', () => {
                 startHold();
             });
 
-            // Обработчик отпускания кнопки
             button.addEventListener('mouseup', () => {
                 cancelHold();
             });
 
-            // Обработчик выхода курсора за пределы кнопки
             button.addEventListener('mouseleave', () => {
                 cancelHold();
             });
@@ -224,38 +312,30 @@
             return button;
         }
 
-        // Начать удержание (для кнопки и Enter)
         function startHold() {
             const button = document.querySelector('.push-button');
-            button.classList.add('active'); // Запускаем анимацию
-
-            // Запускаем таймер для завершения анимации
+            button.classList.add('active');
             holdTimeout = setTimeout(() => {
-                button.classList.remove('active'); // Сбрасываем анимацию
-                handleAuth(); // Выполняем действие после завершения анимации
-            }, 1200); // Удержание на 1.2 секунды
+                button.classList.remove('active');
+                handleAuth();
+            }, 1200);
         }
 
-        // Отменить удержание (для кнопки и Enter)
         function cancelHold() {
-            clearTimeout(holdTimeout); // Отменяем таймер
+            clearTimeout(holdTimeout);
             const button = document.querySelector('.push-button');
-            button.classList.remove('active'); // Сбрасываем анимацию
+            button.classList.remove('active');
         }
 
-        // Переключение между авторизацией и регистрацией
         function switchMode() {
             isLoginMode = !isLoginMode;
             document.getElementById('form-title').textContent = isLoginMode ? 'Авторизация' : 'Регистрация';
             document.getElementById('switch-mode').textContent = isLoginMode ? 'Зарегистрироваться' : 'Войти';
-
-            // Пересоздаем кнопку
             const authButtonContainer = document.getElementById('auth-button-container');
-            authButtonContainer.innerHTML = ''; // Очищаем контейнер
-            authButtonContainer.appendChild(createAuthButton()); // Добавляем новую кнопку
+            authButtonContainer.innerHTML = '';
+            authButtonContainer.appendChild(createAuthButton());
         }
 
-        // Показать/скрыть пин-код
         function togglePassword() {
             const pinInput = document.getElementById('pin');
             const toggleIcon = document.querySelector('.toggle-password');
@@ -268,7 +348,6 @@
             }
         }
 
-        // Обработка авторизации/регистрации
         async function handleAuth() {
             const username = document.getElementById('username').value;
             const pin = document.getElementById('pin').value;
@@ -295,39 +374,44 @@
             const result = await response.json();
 
             if (result.success) {
+                // Плавно скрываем форму
+                const authForm = document.querySelector('.auth-form');
+                authForm.classList.add('hidden');
+
+                // Показываем спиннер
+                const spinner = document.querySelector('.cssload-bell');
+                spinner.classList.add('visible');
+
+                // Сохраняем имя пользователя
                 localStorage.setItem('username', username);
-                window.location.href = '/';
+
+                // Ждем 3.5 секунды (для демонстрации анимации)
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000); // Изменили с 2000 на 3500
             } else {
                 document.getElementById('error').textContent = result.message;
             }
         }
 
-        // Назначаем обработчики событий после загрузки страницы
         document.addEventListener('DOMContentLoaded', () => {
             const switchModeButton = document.getElementById('switch-mode');
-
-            // Инициализация кнопки
             const authButtonContainer = document.getElementById('auth-button-container');
             authButtonContainer.appendChild(createAuthButton());
-
-            // Обработчик для переключения режима
             switchModeButton.addEventListener('click', switchMode);
 
-            // Обработчик для клавиши Enter в полях ввода
             const pinInput = document.getElementById('pin');
             const usernameInput = document.getElementById('username');
 
             const handleEnterKey = (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault(); // Предотвращаем стандартное поведение
-                    startHold(); // Запускаем анимацию кнопки
+                    e.preventDefault();
+                    startHold();
                 }
             };
 
             pinInput.addEventListener('keydown', handleEnterKey);
             usernameInput.addEventListener('keydown', handleEnterKey);
-
-            // Глобальный обработчик для Enter на всей странице
             document.addEventListener('keydown', handleEnterKey);
         });
     </script>
