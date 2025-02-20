@@ -239,6 +239,14 @@
         {
           "from": "test2",
           "message": "asdasdasd"
+        },
+        {
+          "from": "test2",
+          "message": "asdasdas"
+        },
+        {
+          "from": "parser",
+          "message": "xzczcx"
         }
       ]
     },
@@ -547,6 +555,14 @@
         {
           "from": "test2",
           "message": "asdasdasd"
+        },
+        {
+          "from": "test2",
+          "message": "asdasdas"
+        },
+        {
+          "from": "parser",
+          "message": "xzczcx"
         }
       ]
     }

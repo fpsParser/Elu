@@ -89,7 +89,7 @@
             margin: 10px 0;
         }
 
-        .push-button:active {
+        .push-button.active {
             border: 3px outset #81C784;
             color: #81C784;
             background: linear-gradient(160deg, #2e2e2e, #242424);
@@ -111,7 +111,7 @@
             background: linear-gradient(90deg, transparent, #4CAF50);
         }
 
-        .push-button:active span:nth-child(1) {
+        .push-button.active span:nth-child(1) {
             left: 100%;
             transition: 1s;
         }
@@ -124,7 +124,7 @@
             background: linear-gradient(180deg, transparent, #4CAF50);
         }
 
-        .push-button:active span:nth-child(2) {
+        .push-button.active span:nth-child(2) {
             top: 100%;
             transition: 1s;
             transition-delay: 0.25s;
@@ -138,7 +138,7 @@
             background: linear-gradient(270deg, transparent, #4CAF50);
         }
 
-        .push-button:active span:nth-child(3) {
+        .push-button.active span:nth-child(3) {
             right: 100%;
             transition: 1s;
             transition-delay: 0.5s;
@@ -152,7 +152,7 @@
             background: linear-gradient(360deg, transparent, #4CAF50);
         }
 
-        .push-button:active span:nth-child(4) {
+        .push-button.active span:nth-child(4) {
             bottom: 100%;
             transition: 1s;
             transition-delay: 0.75s;
@@ -164,6 +164,8 @@
             text-decoration: underline;
             margin-top: 10px;
             font-size: 14px;
+            display: inline-block; /* Добавлено для уменьшения области клика */
+            padding: 5px; /* Добавлено для уменьшения области клика */
         }
 
         .switch:hover {
@@ -191,7 +193,6 @@
     <script>
         let isLoginMode = true;
         let holdTimeout; // Таймер для удержания кнопки
-        let isHoldingEnter = false; // Флаг для отслеживания удержания Enter
 
         // Функция для создания кнопки
         function createAuthButton() {
@@ -225,10 +226,13 @@
 
         // Начать удержание (для кнопки и Enter)
         function startHold() {
+            const button = document.querySelector('.push-button');
+            button.classList.add('active'); // Запускаем анимацию
+
+            // Запускаем таймер для завершения анимации
             holdTimeout = setTimeout(() => {
-                const button = document.querySelector('.push-button');
-                button.classList.add('active'); // Запускаем анимацию
-                handleAuth(); // Выполняем действие после удержания
+                button.classList.remove('active'); // Сбрасываем анимацию
+                handleAuth(); // Выполняем действие после завершения анимации
             }, 1200); // Удержание на 1.2 секунды
         }
 
@@ -316,7 +320,7 @@
             const handleEnterKey = (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault(); // Предотвращаем стандартное поведение
-                    handleAuth(); // Вызываем функцию авторизации/регистрации
+                    startHold(); // Запускаем анимацию кнопки
                 }
             };
 
@@ -324,12 +328,7 @@
             usernameInput.addEventListener('keydown', handleEnterKey);
 
             // Глобальный обработчик для Enter на всей странице
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Предотвращаем стандартное поведение
-                    handleAuth(); // Вызываем функцию авторизации/регистрации
-                }
-            });
+            document.addEventListener('keydown', handleEnterKey);
         });
     </script>
 </body>
