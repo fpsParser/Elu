@@ -576,7 +576,11 @@
   {
     "username": "1",
     "pin": "1234",
-    "contacts": [],
+    "contacts": [
+      "parser",
+      "test",
+      "test2"
+    ],
     "messages": {}
   },
   {

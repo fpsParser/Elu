@@ -10,27 +10,72 @@
             padding: 0;
             display: flex;
             height: 100vh;
-            background-color: #181818;
+            background-color: #121212;
             color: #d1d1d1;
         }
         #sidebar {
-            width: 300px;
-            background-color: #242424;
+            width: 250px;
+            background-color: #1e1e1e;
             padding: 10px;
             border-right: 1px solid #3a3a3a;
+            display: flex;
+            flex-direction: column;
         }
-        #current-user {
-            font-size: 18px;
-            font-weight: bold;
+        #search-container {
+            display: flex;
+            align-items: stretch;
             margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative; /* Добавляем относительное позиционирование */
+        }
+        #search-container:focus-within {
+            border: 1px solid #28a745;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
         }
         #search {
-            width: 100%;
-            padding: 10px;
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #333;
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            background-color: #2d2d2d;
+            color: #ffffff;
+            outline: none;
+            height: 32px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        #search:focus {
+            border-color: #28a745;
+        }
+        #search-button {
+            width: 40px;
+            height: 32px;
+            border: 1px solid #333;
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #333;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        #search-button:hover {
+            background-color: #3a3a3a;
+        }
+        #search-button img {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1);
+        }
+        #current-user {
+            font-size: 14px;
+            font-weight: bold;
             margin-bottom: 10px;
-            border: 1px solid #3a3a3a;
-            border-radius: 5px;
-            background-color: #2e2e2e;
             color: #d1d1d1;
         }
         #chat {
@@ -43,7 +88,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            background-color: #242424;
+            background-color: #1e1e1e;
             border-bottom: 1px solid #3a3a3a;
         }
         #messages {
@@ -55,27 +100,32 @@
         #messageInput {
             display: flex;
             padding: 10px;
-            background-color: #242424;
+            background-color: #1e1e1e;
         }
         #message {
             flex: 1;
             padding: 10px;
-            border: 1px solid #3a3a3a;
+            border: 1px solid #333;
             border-radius: 5px;
-            background-color: #2e2e2e;
-            color: #d1d1d1;
+            background-color: #2d2d2d;
+            color: #ffffff;
+            outline: none;
+        }
+        #message:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
         }
         button {
             padding: 10px 20px;
             margin-left: 10px;
             border: none;
-            background-color: #4a4a4a;
-            color: #d1d1d1;
+            background-color: #28a745;
+            color: white;
             border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #5a5a5a;
+            background-color: #218838;
         }
         #logout-btn {
             background-color: #a33a3a;
@@ -108,30 +158,50 @@
         .add-user-btn:hover {
             background-color: #5a5a5a;
         }
-        .message {
-            margin-bottom: 10px;
-            padding: 10px;
+        .error-message {
+            color: #ff4444;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        /* Стили для выпадающей шторки */
+        #search-results {
+            position: absolute;
+            top: 40px; /* Отступ от поля поиска */
+            left: 0;
+            right: 0;
+            background-color: #2d2d2d;
+            border: 1px solid #3a3a3a;
             border-radius: 5px;
-            max-width: 70%;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
         }
-        .message.me {
-            background-color: #3a7d3a;
-            margin-left: auto;
+        .search-result-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #3a3a3a;
         }
-        .message.other {
-            background-color: #2e2e2e;
-            margin-right: auto;
+        .search-result-item:hover {
+            background-color: #3a3a3a;
         }
     </style>
 </head>
 <body>
     <div id="sidebar">
+        <!-- Поле поиска и кнопка с лупой -->
+        <div id="search-container">
+            <input type="text" id="search" placeholder="Поиск">
+            <button id="search-button" onclick="searchUser()">
+                <img src="https://img.icons8.com/fluency-systems-regular/50/search--v1.png" alt="search--v1"/>
+            </button>
+            <!-- Шторка с результатами поиска -->
+            <div id="search-results"></div>
+        </div>
+        <!-- Текст "Вы вошли как:" -->
         <div id="current-user">Вы вошли как: <span id="username-display"></span></div>
-        <h2>Поиск</h2>
-        <input type="text" id="search" placeholder="Введите ник">
-        <button onclick="searchUser()">Найти</button>
-        <div id="search-result"></div>
         <div class="user-list" id="user-list"></div>
+        <div id="error-message" class="error-message"></div> <!-- Сообщение об ошибке -->
     </div>
     <div id="chat">
         <div id="header">
@@ -170,6 +240,12 @@
 
         function searchUser() {
             const searchUsername = document.getElementById('search').value;
+            const searchResults = document.getElementById('search-results');
+
+            if (!searchUsername) {
+                searchResults.innerHTML = ''; // Очищаем шторку, если поле пустое
+                return;
+            }
 
             fetch('/search-user', {
                 method: 'POST',
@@ -182,14 +258,17 @@
             .then(data => {
                 if (data.success) {
                     const user = data.user.username;
-                    document.getElementById('search-result').innerHTML = `
-                        <div class="user-item">
+                    searchResults.innerHTML = `
+                        <div class="search-result-item" onclick="addUser('${user}')">
                             <span>${user}</span>
-                            <button class="add-user-btn" onclick="addUser('${user}')">+</button>
                         </div>
                     `;
                 } else {
-                    document.getElementById('search-result').textContent = data.message;
+                    searchResults.innerHTML = `
+                        <div class="search-result-item">
+                            <span>Пользователь не найден</span>
+                        </div>
+                    `;
                 }
             });
         }
@@ -210,7 +289,7 @@
                         localStorage.setItem('contacts', JSON.stringify(userContacts));
                         updateUserList();
                         document.getElementById('search').value = ''; // Очищаем поле поиска
-                        document.getElementById('search-result').innerHTML = ''; // Очищаем результат поиска
+                        document.getElementById('search-results').innerHTML = ''; // Очищаем шторку
                     }
                 });
             }
@@ -268,6 +347,22 @@
             window.location.href = '/auth.html';
         }
 
+        // Обработчик Enter для поля поиска
+        document.getElementById('search').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchUser();
+            }
+        });
+
+        // Обработчик изменения текста в поле поиска
+        document.getElementById('search').addEventListener('input', () => {
+            const searchResults = document.getElementById('search-results');
+            if (document.getElementById('search').value === '') {
+                searchResults.innerHTML = ''; // Очищаем шторку, если поле пустое
+            }
+        });
+
+        // Обработчик Enter для поля сообщения
         document.getElementById('message').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
@@ -292,6 +387,9 @@
                 }
             }
         });
+
+        // Обработчик для кнопки поиска
+        document.getElementById('search-button').addEventListener('click', searchUser);
     </script>
 </body>
 </html>
