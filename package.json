@@ -1,16 +1,34 @@
 {
   "name": "my-chat-app",
   "version": "1.0.0",
+  "description": "Личные сообщения",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "server": "node server.js"
+    "server": "node server.js",
+    "build": "electron-builder"
   },
   "dependencies": {
     "express": "^4.21.2",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "electron": "^28.1.0"
+    "electron": "^28.1.0",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "productName": "My Chat App",
+    "appId": "com.example.my-chat-app",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }

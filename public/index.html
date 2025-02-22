@@ -4,7 +4,7 @@
     <title>Личные сообщения</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <style>
-        body {
+       body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -189,19 +189,16 @@
 </head>
 <body>
     <div id="sidebar">
-        <!-- Поле поиска и кнопка с лупой -->
         <div id="search-container">
             <input type="text" id="search" placeholder="Поиск">
             <button id="search-button" onclick="searchUser()">
                 <img src="https://img.icons8.com/fluency-systems-regular/50/search--v1.png" alt="search--v1"/>
             </button>
-            <!-- Шторка с результатами поиска -->
             <div id="search-results"></div>
         </div>
-        <!-- Текст "Вы вошли как:" -->
         <div id="current-user">Вы вошли как: <span id="username-display"></span></div>
         <div class="user-list" id="user-list"></div>
-        <div id="error-message" class="error-message"></div> <!-- Сообщение об ошибке -->
+        <div id="error-message" class="error-message"></div>
     </div>
     <div id="chat">
         <div id="header">
@@ -216,7 +213,10 @@
     </div>
 
     <script>
-        const socket = io();
+        // Убираем IP-адрес и используем переменную окружения
+        const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
+        const socket = io(serverUrl);
+
         const username = localStorage.getItem('username');
 
         if (!username) {
@@ -247,7 +247,7 @@
                 return;
             }
 
-            fetch('/search-user', {
+            fetch(`${serverUrl}/search-user`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -275,7 +275,7 @@
 
         function addUser(user) {
             if (!userContacts.includes(user)) {
-                fetch('/add-contact', {
+                fetch(`${serverUrl}/add-contact`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -6,7 +6,12 @@ const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // Разрешаем доступ всем клиентам
+    methods: ["GET", "POST"]
+  }
+});
 
 // Раздаем статические файлы (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -199,7 +204,8 @@ function saveMessage(from, to, message) {
 }
 
 // Запуск сервера
-const PORT = 3000;
-server.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+server.listen(PORT, HOST, () => {
+    console.log(`Сервер запущен на http://${HOST}:${PORT}`);
 });
