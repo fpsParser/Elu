@@ -14,8 +14,8 @@ function createWindow() {
         autoHideMenuBar: true,
     });
 
-    // Загружаем ваш сервер
-    mainWindow.loadURL('http://localhost:3000');
+    // Загружаем index.html напрямую
+    mainWindow.loadFile(path.join(__dirname, 'public', 'index.html'));
 
     // Убираем DevTools (инструменты разработчика)
     // mainWindow.webContents.openDevTools(); // Закомментируйте эту строку
