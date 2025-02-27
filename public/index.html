@@ -305,8 +305,27 @@
 
         document.getElementById('username-display').textContent = username;
 
-        let userContacts = JSON.parse(localStorage.getItem('contacts')) || [];
-        let userMessages = JSON.parse(localStorage.getItem('messages')) || {};
+        let userContacts = [];
+
+// Загружаем контакты из базы данных при загрузке страницы
+async function loadContacts() {
+    const response = await fetch(`${serverUrl}/get-contacts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+        userContacts = data.contacts;
+        updateUserList();
+    }
+}
+
+loadContacts();
+
 
         socket.emit('register-user', username);
 
@@ -370,7 +389,6 @@
                 .then(data => {
                     if (data.success) {
                         userContacts.push(user);
-                        localStorage.setItem('contacts', JSON.stringify(userContacts));
                         updateUserList();
                         document.getElementById('search').value = '';
                         document.getElementById('search-results').innerHTML = '';
@@ -404,35 +422,51 @@
             document.getElementById('chat').classList.add('hide');
         }
 
-        function loadMessages(user) {
-            const messagesElement = document.getElementById('messages');
-            messagesElement.innerHTML = (userMessages[user] || []).map(msg => `
-                <div class="message ${msg.from === username ? 'me' : 'other'}">
-                    ${msg.message}
-                </div>
-            `).join('');
-            messagesElement.scrollTop = messagesElement.scrollHeight;
-        }
+        async function loadMessages(user) {
+    const messagesElement = document.getElementById('messages');
+
+    const response = await fetch(`${serverUrl}/get-messages`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, contact: user }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+        messagesElement.innerHTML = data.messages.map(msg => `
+            <div class="message ${msg.from === username ? 'me' : 'other'}">
+                ${msg.message}
+            </div>
+        `).join('');
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    }
+}
 
         function sendMessage() {
-            const message = document.getElementById('message').value;
-            if (message && currentChatUser) {
-                socket.emit('private-message', {
-                    from: username,
-                    to: currentChatUser,
-                    message,
-                });
+    const message = document.getElementById('message').value;
+    if (message && currentChatUser) {
+        socket.emit('private-message', {
+            from: username,
+            to: currentChatUser,
+            message,
+        });
 
-                if (!userMessages[currentChatUser]) {
-                    userMessages[currentChatUser] = [];
-                }
-                userMessages[currentChatUser].push({ from: username, message });
-                localStorage.setItem('messages', JSON.stringify(userMessages));
+        // Очищаем поле ввода
+        document.getElementById('message').value = '';
 
-                document.getElementById('message').value = '';
-                loadMessages(currentChatUser);
-            }
-        }
+        // Добавляем сообщение в интерфейс сразу
+        const messagesElement = document.getElementById('messages');
+        const newMessage = document.createElement('div');
+        newMessage.className = `message me`;
+        newMessage.textContent = message;
+        messagesElement.appendChild(newMessage);
+
+        // Прокручиваем чат вниз
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    }
+}
 
         function logout() {
             localStorage.removeItem('username');
