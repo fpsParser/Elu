@@ -4,7 +4,7 @@
     <title>Личные сообщения</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <style>
-    body {
+   body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
@@ -265,7 +265,7 @@
         width: 8px; /* Увеличиваем ширину при наведении */
         background: #218838; /* Цвет при наведении */
     }
-</style>
+    </style>
 </head>
 <body>
     <div id="sidebar">
@@ -307,32 +307,28 @@
 
         let userContacts = [];
 
-// Загружаем контакты из базы данных при загрузке страницы
-async function loadContacts() {
-    const response = await fetch(`${serverUrl}/get-contacts`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username }),
-    });
+        // Загружаем контакты из базы данных
+        async function loadContacts() {
+            const response = await fetch(`${serverUrl}/get-contacts`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username }),
+            });
 
-    const data = await response.json();
-    if (data.success) {
-        userContacts = data.contacts;
-        updateUserList();
-    }
-}
+            const data = await response.json();
+            if (data.success) {
+                userContacts = data.contacts;
+                updateUserList();
+            }
+        }
 
-loadContacts();
-
-
-        socket.emit('register-user', username);
-
-        updateUserList();
+        loadContacts();
 
         let currentChatUser = null;
 
+        // Поиск пользователя
         function searchUser() {
             const searchUsername = document.getElementById('search').value;
             const searchResults = document.getElementById('search-results');
@@ -376,6 +372,7 @@ loadContacts();
             });
         }
 
+        // Добавление пользователя в контакты
         function addUser(user) {
             if (!userContacts.includes(user)) {
                 fetch(`${serverUrl}/add-contact`, {
@@ -397,6 +394,7 @@ loadContacts();
             }
         }
 
+        // Обновление списка контактов
         function updateUserList() {
             const userListElement = document.getElementById('user-list');
             userListElement.innerHTML = userContacts.map(user => `
@@ -406,81 +404,86 @@ loadContacts();
             `).join('');
         }
 
+        // Выбор пользователя для чата
         function selectUser(user) {
             currentChatUser = user;
             document.getElementById('chat-title').textContent = `Чат с ${user}`;
             loadMessages(user);
 
-            if (window.innerWidth <= 572) { /* Изменил значение на 572px */
+            if (window.innerWidth <= 572) {
                 document.getElementById('sidebar').classList.remove('active');
                 document.getElementById('chat').classList.remove('hide');
             }
         }
 
+        // Показать контакты
         function showContacts() {
             document.getElementById('sidebar').classList.add('active');
             document.getElementById('chat').classList.add('hide');
         }
 
+        // Загрузка сообщений
         async function loadMessages(user) {
-    const messagesElement = document.getElementById('messages');
+            const messagesElement = document.getElementById('messages');
 
-    const response = await fetch(`${serverUrl}/get-messages`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, contact: user }),
-    });
+            const response = await fetch(`${serverUrl}/get-messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, contact: user }),
+            });
 
-    const data = await response.json();
-    if (data.success) {
-        messagesElement.innerHTML = data.messages.map(msg => `
-            <div class="message ${msg.from === username ? 'me' : 'other'}">
-                ${msg.message}
-            </div>
-        `).join('');
-        messagesElement.scrollTop = messagesElement.scrollHeight;
-    }
-}
+            const data = await response.json();
+            if (data.success) {
+                messagesElement.innerHTML = data.messages.map(msg => `
+                    <div class="message ${msg.from === username ? 'me' : 'other'}">
+                        ${msg.message}
+                    </div>
+                `).join('');
+                messagesElement.scrollTop = messagesElement.scrollHeight;
+            }
+        }
 
+        // Отправка сообщения
         function sendMessage() {
-    const message = document.getElementById('message').value;
-    if (message && currentChatUser) {
-        socket.emit('private-message', {
-            from: username,
-            to: currentChatUser,
-            message,
-        });
+            const message = document.getElementById('message').value;
+            if (message && currentChatUser) {
+                socket.emit('private-message', {
+                    from: username,
+                    to: currentChatUser,
+                    message,
+                });
 
-        // Очищаем поле ввода
-        document.getElementById('message').value = '';
+                // Очищаем поле ввода
+                document.getElementById('message').value = '';
 
-        // Добавляем сообщение в интерфейс сразу
-        const messagesElement = document.getElementById('messages');
-        const newMessage = document.createElement('div');
-        newMessage.className = `message me`;
-        newMessage.textContent = message;
-        messagesElement.appendChild(newMessage);
+                // Добавляем сообщение в интерфейс сразу
+                const messagesElement = document.getElementById('messages');
+                const newMessage = document.createElement('div');
+                newMessage.className = `message me`;
+                newMessage.textContent = message;
+                messagesElement.appendChild(newMessage);
 
-        // Прокручиваем чат вниз
-        messagesElement.scrollTop = messagesElement.scrollHeight;
-    }
-}
+                // Прокручиваем чат вниз
+                messagesElement.scrollTop = messagesElement.scrollHeight;
+            }
+        }
 
+        // Выход
         function logout() {
             localStorage.removeItem('username');
-            localStorage.removeItem('contacts');
-            localStorage.removeItem('messages');
             window.location.href = './auth.html';
         }
 
+        // Обработка нажатия Enter в поиске
         document.getElementById('search').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 searchUser();
             }
         });
 
+        // Очистка результатов поиска
         document.getElementById('search').addEventListener('input', () => {
             const searchResults = document.getElementById('search-results');
             if (document.getElementById('search').value === '') {
@@ -488,30 +491,31 @@ loadContacts();
             }
         });
 
+        // Обработка нажатия Enter в поле сообщения
         document.getElementById('message').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         });
 
+        // Обработка новых сообщений
         socket.on('private-message', (data) => {
-            if (!userMessages[data.from]) {
-                userMessages[data.from] = [];
-            }
-            userMessages[data.from].push(data);
-            localStorage.setItem('messages', JSON.stringify(userMessages));
-
             if (data.from === currentChatUser) {
-                loadMessages(currentChatUser);
+                const messagesElement = document.getElementById('messages');
+                const newMessage = document.createElement('div');
+                newMessage.className = `message other`;
+                newMessage.textContent = data.message;
+                messagesElement.appendChild(newMessage);
+                messagesElement.scrollTop = messagesElement.scrollHeight;
             } else {
                 if (!userContacts.includes(data.from)) {
                     userContacts.push(data.from);
-                    localStorage.setItem('contacts', JSON.stringify(userContacts));
                     updateUserList();
                 }
             }
         });
 
+        // Обработка клика по кнопке поиска
         document.getElementById('search-button').addEventListener('click', searchUser);
     </script>
 </body>

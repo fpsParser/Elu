@@ -288,7 +288,7 @@
     </div>
 
     <script>
-        const serverUrl = 'https://my-chat-app-server-r9rx.onrender.com'; // Добавляем URL сервера
+        const serverUrl = 'https://my-chat-app-server-r9rx.onrender.com';
 
         let isLoginMode = true;
         let holdTimeout;
@@ -370,7 +370,7 @@
             }
 
             const endpoint = isLoginMode ? '/login' : '/register';
-            const response = await fetch(`${serverUrl}${endpoint}`, { // Используем serverUrl
+            const response = await fetch(`${serverUrl}${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -394,8 +394,8 @@
 
                 // Ждем 3 секунды (для демонстрации анимации)
                 setTimeout(() => {
-                    window.location.href = './index.html'; // Используем относительный путь
-                }, 3000); // 3 секунды
+                    window.location.href = './index.html';
+                }, 3000);
             } else {
                 document.getElementById('error').textContent = result.message;
             }
