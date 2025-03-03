@@ -4,267 +4,372 @@
     <title>Личные сообщения</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <style>
-   body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        height: 100vh;
-        background-color: #121212;
-        color: #d1d1d1;
-    }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background-color: #121212;
+    color: #d1d1d1;
+}
+
+#sidebar {
+    width: 250px;
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-right: 1px solid #3a3a3a;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.3s ease;
+}
+
+#back-button {
+    display: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 10px;
+    color: #d1d1d1;
+    text-align: center;
+}
+
+#search-container {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    position: relative;
+    border: 1px solid #333; /* Базовая обводка */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Плавное изменение */
+}
+
+#search-container:focus-within {
+    border-color: #28a745; /* Зелёная обводка при фокусе */
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Тень при фокусе */
+}
+
+#search {
+    flex: 1;
+    padding: 6px;
+    border: none; /* Убираем границу у input */
+    border-radius: 5px 0 0 5px; /* Закругляем только левый угол */
+    background-color: #2d2d2d;
+    color: #ffffff;
+    outline: none; /* Убираем стандартную обводку при фокусе */
+    height: 32px;
+    box-sizing: border-box;
+    margin: 0;
+    width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
+}
+
+#search:focus {
+    border-color: #28a745;
+}
+
+#search-button {
+    width: 40px; /* Фиксированная ширина кнопки */
+    height: 32px;
+    border: none; /* Убираем границу у кнопки */
+    border-radius: 0 5px 5px 0; /* Закругляем только правый угол */
+    background-color: #333;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    transition: background-color 0.2s ease; /* Плавное изменение цвета */
+    flex-shrink: 0; /* Запрещаем сжимание кнопки */
+}
+
+#search-button:hover {
+    background-color: #3a3a3a; /* Цвет кнопки при наведении */
+}
+
+#search-button img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1); /* Иконка белого цвета */
+}
+
+#current-user {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #d1d1d1;
+}
+
+#chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+#messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    border-bottom: 1px solid #3a3a3a;
+    display: flex;
+    flex-direction: column;
+}
+
+#messageInput {
+    display: flex;
+    padding: 10px;
+    background-color: #1e1e1e;
+}
+
+#message {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #2d2d2d;
+    color: #ffffff;
+    outline: none;
+}
+
+#message:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#logout-btn {
+    background-color: #a33a3a;
+}
+
+#logout-btn:hover {
+    background-color: #922b2b;
+}
+
+.user-list {
+    margin-top: 10px;
+}
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #3a3a3a;
+    cursor: pointer;
+}
+
+.user-item:hover {
+    background-color: #2e2e2e;
+}
+
+.add-user-btn {
+    background-color: #4a4a4a;
+    border: none;
+    color: #d1d1d1;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-user-btn:hover {
+    background-color: #5a5a5a;
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#search-results {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    background-color: #2d2d2d;
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.search-result-item:hover {
+    background-color: #3a3a3a;
+}
+
+.message {
+    max-width: 70%;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    position: relative;
+    word-wrap: break-word;
+    word-break: break-word;
+    width: fit-content;
+    text-align: left;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.message.me {
+    background-color: #218838;
+    color: #f0f0f0;
+    align-self: flex-end;
+    margin-right: 8px;
+    border-bottom: 2px solid #1c7430;
+}
+
+.message.other {
+    background-color: #2d2d2d;
+    color: #c0c0c0;
+    align-self: flex-start;
+    margin-left: 8px;
+    border-bottom: 2px solid #242424;
+}
+
+@media (max-width: 572px) {
     #sidebar {
-        width: 250px;
-        background-color: #1e1e1e;
-        padding: 10px;
-        border-right: 1px solid #3a3a3a;
-        display: flex;
-        flex-direction: column;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1000;
         transition: opacity 0.3s ease;
+        display: none; /* Полностью скрываем шторку */
+    }
+    #sidebar.active {
+        display: flex; /* Показываем шторку */
     }
     #back-button {
+        display: block;
+        margin-right: 10px;
+    }
+    #chat.hide {
         display: none;
-        cursor: pointer;
-        font-size: 24px;
-        padding: 10px;
-        color: #d1d1d1;
-        text-align: center;
     }
+
+    /* Новые стили для адаптивного поиска и текста "Вы вошли как:" */
     #search-container {
-        display: flex;
-        align-items: stretch;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        position: relative;
+        width: calc(100% - 20px); /* Ширина с учётом отступов */
+        margin: 10px; /* Отступы по бокам */
     }
-    #search-container:focus-within {
-        border: 1px solid #28a745;
-        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
-    }
-    #search {
-        flex: 1;
-        padding: 6px;
-        border: 1px solid #333;
-        border-right: none;
-        border-radius: 5px 0 0 5px;
-        background-color: #2d2d2d;
-        color: #ffffff;
-        outline: none;
-        height: 32px;
-        box-sizing: border-box;
-        margin: 0;
-    }
-    #search:focus {
-        border-color: #28a745;
-    }
-    #search-button {
-        width: 40px;
-        height: 32px;
-        border: 1px solid #333;
-        border-left: none;
-        border-radius: 0 5px 5px 0;
-        background-color: #333;
-        color: #ffffff;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        box-sizing: border-box;
-        margin: 0;
-    }
-    #search-button:hover {
-        background-color: #3a3a3a;
-    }
-    #search-button img {
-        width: 20px;
-        height: 20px;
-        filter: brightness(0) invert(1);
-    }
+
     #current-user {
-        font-size: 14px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #d1d1d1;
-    }
-    #chat {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-    #header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        background-color: #1e1e1e;
-        border-bottom: 1px solid #3a3a3a;
-    }
-    #messages {
-        flex: 1;
-        padding: 10px;
-        overflow-y: auto;
-        border-bottom: 1px solid #3a3a3a;
-        display: flex;
-        flex-direction: column;
-    }
-    #messageInput {
-        display: flex;
-        padding: 10px;
-        background-color: #1e1e1e;
-    }
-    #message {
-        flex: 1;
-        padding: 10px;
-        border: 1px solid #333;
-        border-radius: 5px;
-        background-color: #2d2d2d;
-        color: #ffffff;
-        outline: none;
-    }
-    #message:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
-    }
-    button {
-        padding: 10px 20px;
-        margin-left: 10px;
-        border: none;
-        background-color: #28a745;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #218838;
-    }
-    #logout-btn {
-        background-color: #a33a3a;
-    }
-    #logout-btn:hover {
-        background-color: #922b2b;
-    }
-    .user-list {
-        margin-top: 10px;
-    }
-    .user-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        border-bottom: 1px solid #3a3a3a;
-        cursor: pointer;
-    }
-    .user-item:hover {
-        background-color: #2e2e2e;
-    }
-    .add-user-btn {
-        background-color: #4a4a4a;
-        border: none;
-        color: #d1d1d1;
-        padding: 5px 10px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .add-user-btn:hover {
-        background-color: #5a5a5a;
-    }
-    .error-message {
-        color: #ff4444;
-        font-size: 14px;
-        margin-top: 10px;
-        text-align: center;
-    }
-    #search-results {
-        position: absolute;
-        top: 40px;
-        left: 0;
-        right: 0;
-        background-color: #2d2d2d;
-        border: 1px solid #3a3a3a;
-        border-radius: 5px;
-        max-height: 200px;
-        overflow-y: auto;
-        z-index: 1000;
-    }
-    .search-result-item {
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #3a3a3a;
-    }
-    .search-result-item:hover {
-        background-color: #3a3a3a;
-    }
-    .message {
-        max-width: 70%;
-        padding: 6px 10px;
-        border-radius: 8px;
-        margin-bottom: 4px;
-        position: relative;
-        word-wrap: break-word;
-        word-break: break-word;
-        width: fit-content;
-        text-align: left;
-        display: inline-block;
-        font-size: 14px;
-        line-height: 1.3;
-    }
-    .message.me {
-        background-color: #218838;
-        color: #f0f0f0;
-        align-self: flex-end;
-        margin-right: 8px;
-        border-bottom: 2px solid #1c7430;
-    }
-    .message.other {
-        background-color: #2d2d2d;
-        color: #c0c0c0;
-        align-self: flex-start;
-        margin-left: 8px;
-        border-bottom: 2px solid #242424;
-    }
-    @media (max-width: 572px) {
-        #sidebar {
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-            display: none; /* Полностью скрываем шторку */
-        }
-        #sidebar.active {
-            display: flex; /* Показываем шторку */
-        }
-        #back-button {
-            display: block;
-            margin-right: 10px;
-        }
-        #chat.hide {
-            display: none;
-        }
+        margin: 10px; /* Отступы для текста "Вы вошли как:" */
+        font-size: 14px; /* Уменьшаем размер текста */
     }
 
-    /* Стили для ползунка во всех режимах */
-    ::-webkit-scrollbar {
-        width: 6px; /* Тонкий ползунок */
+    #search {
+        width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
+    }
+}
+
+@media (max-width: 400px) {
+    #search-container {
+        width: calc(100% - 20px); /* Ширина с учётом отступов */
+        margin: 5px; /* Уменьшаем отступы */
     }
 
-    ::-webkit-scrollbar-track {
-        background: #1e1e1e; /* Цвет фона ползунка */
+    #search {
+        width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
+        font-size: 14px; /* Уменьшаем размер текста */
+        padding: 4px; /* Уменьшаем отступы внутри поля */
     }
 
-    ::-webkit-scrollbar-thumb {
-        background: #1c7430; /* Самый тёмный зелёный */
-        border-radius: 4px; /* Округлые края */
-        transition: width 0.2s ease, background 0.2s ease; /* Плавное изменение */
+    #search-button {
+        width: 36px; /* Уменьшаем ширину кнопки */
     }
 
-    ::-webkit-scrollbar-thumb:hover {
-        width: 8px; /* Увеличиваем ширину при наведении */
-        background: #218838; /* Цвет при наведении */
+    #search-button img {
+        width: 18px; /* Уменьшаем размер иконки */
+        height: 18px;
     }
+
+    #current-user {
+        margin: 5px; /* Уменьшаем отступы */
+        font-size: 12px; /* Ещё меньше размер текста */
+    }
+}
+
+@media (max-width: 320px) {
+    #search-container {
+        width: calc(100% - 10px); /* Ширина с учётом отступов */
+        margin: 5px; /* Минимальные отступы */
+    }
+
+    #search {
+        width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
+        font-size: 12px; /* Минимальный размер текста */
+        padding: 2px; /* Минимальные отступы внутри поля */
+    }
+
+    #search-button {
+        width: 32px; /* Минимальная ширина кнопки */
+    }
+
+    #search-button img {
+        width: 16px; /* Минимальный размер иконки */
+        height: 16px;
+    }
+
+    #current-user {
+        margin: 5px; /* Минимальные отступы */
+        font-size: 10px; /* Минимальный размер текста */
+    }
+}
+
+/* Стили для ползунка во всех режимах */
+::-webkit-scrollbar {
+    width: 6px; /* Тонкий ползунок */
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Цвет фона ползунка */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1c7430; /* Самый тёмный зелёный */
+    border-radius: 4px; /* Округлые края */
+    transition: width 0.2s ease, background 0.2s ease; /* Плавное изменение */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    width: 8px; /* Увеличиваем ширину при наведении */
+    background: #218838; /* Цвет при наведении */
+}
     </style>
 </head>
 <body>
@@ -499,24 +604,37 @@
         });
 
         // Обработка новых сообщений
-        socket.on('private-message', (data) => {
-            if (data.from === currentChatUser) {
-                const messagesElement = document.getElementById('messages');
-                const newMessage = document.createElement('div');
-                newMessage.className = `message other`;
-                newMessage.textContent = data.message;
-                messagesElement.appendChild(newMessage);
-                messagesElement.scrollTop = messagesElement.scrollHeight;
-            } else {
-                if (!userContacts.includes(data.from)) {
-                    userContacts.push(data.from);
-                    updateUserList();
-                }
-            }
+socket.on('private-message', (data) => {
+    if (data.from === currentChatUser) {
+        // Если сообщение от текущего собеседника, добавляем его в чат
+        const messagesElement = document.getElementById('messages');
+        const newMessage = document.createElement('div');
+        newMessage.className = `message other`;
+        newMessage.textContent = data.message;
+        messagesElement.appendChild(newMessage);
+
+        // Прокручиваем чат вниз
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    } else {
+        // Если сообщение от другого пользователя, обновляем контакты
+        if (!userContacts.includes(data.from)) {
+            userContacts.push(data.from);
+            updateUserList();
+        }
+
+        // Уведомление о новом сообщении удалено
+    }
+});
+
+        // Обработка обновления контактов
+        socket.on('update-contacts', (contacts) => {
+            userContacts = contacts; // Обновляем список контактов
+            updateUserList(); // Обновляем интерфейс
+            console.log('Контакты обновлены:', contacts); // Для отладки
         });
 
-        // Обработка клика по кнопке поиска
-        document.getElementById('search-button').addEventListener('click', searchUser);
+        // Регистрируем пользователя в WebSocket
+        socket.emit('register-user', username);
     </script>
 </body>
 </html>
