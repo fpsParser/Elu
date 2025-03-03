@@ -175,12 +175,22 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #3a3a3a;
     cursor: pointer;
+    border-bottom: none; /* Убираем границу снизу */
+    transition: background-color 0.2s ease; /* Плавное изменение фона */
+    border-radius: 6px; /* Закругляем края всегда */
 }
 
 .user-item:hover {
-    background-color: #2e2e2e;
+    background-color: #2e2e2e; /* Цвет при наведении */
+}
+
+.user-item.selected {
+    background-color: #218838; /* Зелёный цвет для выделения */
+    color: #ffffff; /* Белый текст для контраста */
+    border-radius: 6px; /* Закругляем края */
+    margin: 4px 0; /* Добавляем небольшой отступ сверху и снизу */
+    border: none; /* Убираем границы */
 }
 
 .add-user-btn {
@@ -255,6 +265,13 @@ button:hover {
     align-self: flex-start;
     margin-left: 8px;
     border-bottom: 2px solid #242424;
+}
+
+.user-item.selected {
+    background-color: #218838; /* Зелёный цвет для выделения */
+    color: #ffffff; /* Белый текст для контраста */
+    border-radius: 6px; /* Закругляем края */
+    margin: 4px 0; /* Добавляем небольшой отступ сверху и снизу */
 }
 
 @media (max-width: 572px) {
@@ -501,16 +518,27 @@ button:hover {
         }
 
         // Выбор пользователя для чата
-        function selectUser(user) {
-            currentChatUser = user;
-            document.getElementById('chat-title').textContent = `Чат с ${user}`;
-            loadMessages(user);
+function selectUser(user) {
+    currentChatUser = user;
+    document.getElementById('chat-title').textContent = `Чат с ${user}`;
+    loadMessages(user);
 
-            if (window.innerWidth <= 572) {
-                document.getElementById('sidebar').classList.remove('active');
-                document.getElementById('chat').classList.remove('hide');
-            }
-        }
+    // Убираем выделение у всех контактов
+    const userItems = document.querySelectorAll('.user-item');
+    userItems.forEach(item => item.classList.remove('selected'));
+
+    // Выделяем выбранный контакт
+    const selectedUserItem = Array.from(userItems).find(item => item.textContent.includes(user));
+    if (selectedUserItem) {
+        selectedUserItem.classList.add('selected');
+    }
+
+    // Адаптация для мобильных устройств
+    if (window.innerWidth <= 572) {
+        document.getElementById('sidebar').classList.remove('active');
+        document.getElementById('chat').classList.remove('hide');
+    }
+}
 
         // Показать контакты
         function showContacts() {
