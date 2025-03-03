@@ -59,7 +59,6 @@ body {
     height: 32px;
     box-sizing: border-box;
     margin: 0;
-    width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
 }
 
 #search:focus {
@@ -67,7 +66,7 @@ body {
 }
 
 #search-button {
-    width: 40px; /* Фиксированная ширина кнопки */
+    width: 40px;
     height: 32px;
     border: none; /* Убираем границу у кнопки */
     border-radius: 0 5px 5px 0; /* Закругляем только правый угол */
@@ -81,7 +80,6 @@ body {
     box-sizing: border-box;
     margin: 0;
     transition: background-color 0.2s ease; /* Плавное изменение цвета */
-    flex-shrink: 0; /* Запрещаем сжимание кнопки */
 }
 
 #search-button:hover {
@@ -281,30 +279,24 @@ button:hover {
         display: none;
     }
 
-    /* Новые стили для адаптивного поиска и текста "Вы вошли как:" */
+    /* Новые стили для адаптивного поиска */
     #search-container {
-        width: calc(100% - 20px); /* Ширина с учётом отступов */
-        margin: 10px; /* Отступы по бокам */
+        width: 90%; /* Уменьшаем ширину на 10% */
+        margin: 10px auto; /* Центрируем контейнер */
     }
 
     #current-user {
         margin: 10px; /* Отступы для текста "Вы вошли как:" */
         font-size: 14px; /* Уменьшаем размер текста */
     }
-
-    #search {
-        width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
-    }
 }
 
 @media (max-width: 400px) {
     #search-container {
-        width: calc(100% - 20px); /* Ширина с учётом отступов */
-        margin: 5px; /* Уменьшаем отступы */
+        width: 85%; /* Ещё меньше ширина на узких экранах */
     }
 
     #search {
-        width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
         font-size: 14px; /* Уменьшаем размер текста */
         padding: 4px; /* Уменьшаем отступы внутри поля */
     }
@@ -326,12 +318,10 @@ button:hover {
 
 @media (max-width: 320px) {
     #search-container {
-        width: calc(100% - 10px); /* Ширина с учётом отступов */
-        margin: 5px; /* Минимальные отступы */
+        width: 80%; /* Минимальная ширина на очень узких экранах */
     }
 
     #search {
-        width: calc(100% - 40px); /* Ширина поля с учётом кнопки */
         font-size: 12px; /* Минимальный размер текста */
         padding: 2px; /* Минимальные отступы внутри поля */
     }
