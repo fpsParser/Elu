@@ -14,15 +14,33 @@
             color: #d1d1d1;
         }
 
-        #sidebar {
-            width: 250px;
-            background-color: #1e1e1e;
-            padding: 10px;
-            border-right: 1px solid #3a3a3a;
-            display: flex;
-            flex-direction: column;
-            transition: opacity 0.3s ease;
-        }
+#sidebar {
+    width: 250px;
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-right: 1px solid #3a3a3a;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.3s ease;
+    box-sizing: border-box; /* Учитываем padding и border в общей ширине */
+}
+
+@media (max-width: 572px) {
+    #sidebar {
+        width: 100%; /* Занимаем всю ширину */
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1000;
+        display: none; /* Скрываем по умолчанию */
+        padding: 10px 5px; /* Уменьшаем отступы */
+    }
+
+    #sidebar.active {
+        display: flex; /* Показываем при активации */
+    }
+}
 
         #search-container {
             display: flex;
@@ -82,6 +100,34 @@
             height: 20px;
             filter: brightness(0) invert(1);
         }
+
+#avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.8); /* Белый текст с небольшой прозрачностью */
+    font-weight: bold;
+    font-size: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.05); /* Очень лёгкая обводка */
+}
+
+.user-item div {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.8); /* Белый текст с небольшой прозрачностью */
+    font-weight: bold;
+    font-size: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.05); /* Очень лёгкая обводка */
+}
 
 #profile-button {
     width: calc(100% - 10px); /* Ширина на 10px меньше, чем у строки поиска */
@@ -201,10 +247,6 @@
     color: #d1d1d1;
 }
 
-.settings-content h2 {
-    margin-bottom: 20px;
-}
-
 .settings-content button {
     padding: 10px;
     margin: 5px 0;
@@ -221,32 +263,78 @@
     background-color: #5a5a5a;
 }
 
-        .user-list {
-            margin-top: 10px;
-        }
+.user-list {
+    margin-top: 10px;
+    overflow-y: auto; /* Добавляем скролл, если контактов много */
+    flex: 1; /* Занимаем всё доступное пространство */
+}
 
-        .user-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: none;
-            transition: background-color 0.2s ease;
-            border-radius: 6px;
-        }
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: none;
+    transition: background-color 0.2s ease;
+    border-radius: 6px;
+}
 
-        .user-item:hover {
-            background-color: #2e2e2e;
-        }
+.user-item:hover {
+    background-color: #2e2e2e;
+}
 
-        .user-item.selected {
-            background-color: #218838;
-            color: #ffffff;
-            border-radius: 6px;
-            margin: 4px 0;
-            border: none;
-        }
+.user-item.selected {
+    background-color: #218838;
+    color: #ffffff;
+    border-radius: 6px;
+    margin: 4px 0;
+    border: none;
+}
+
+/* Медиа-запросы для маленьких экранов */
+@media (max-width: 572px) {
+    .user-item {
+        padding: 10px; /* Увеличиваем отступы */
+        font-size: 16px; /* Увеличиваем размер шрифта */
+    }
+
+    .user-item div {
+        width: 30px; /* Увеличиваем размер аватара */
+        height: 30px;
+        font-size: 14px; /* Увеличиваем размер текста в аватаре */
+    }
+
+    .user-list {
+        padding: 0 10px; /* Увеличиваем отступы по бокам */
+    }
+}
+
+@media (max-width: 400px) {
+    .user-item {
+        padding: 8px; /* Немного уменьшаем отступы */
+        font-size: 14px; /* Немного уменьшаем размер шрифта */
+    }
+
+    .user-item div {
+        width: 25px; /* Немного уменьшаем размер аватара */
+        height: 25px;
+        font-size: 12px; /* Немного уменьшаем размер текста в аватаре */
+    }
+}
+
+@media (max-width: 320px) {
+    .user-item {
+        padding: 6px; /* Минимальные отступы */
+        font-size: 12px; /* Минимальный размер шрифта */
+    }
+
+    .user-item div {
+        width: 20px; /* Минимальный размер аватара */
+        height: 20px;
+        font-size: 10px; /* Минимальный размер текста в аватаре */
+    }
+}
 
         .add-user-btn {
             background-color: #4a4a4a;
@@ -335,11 +423,42 @@
             #sidebar.active {
                 display: flex;
             }
-            #back-button {
-				cursor: pointer !important;
-                display: block;
-                margin-right: 10px;
-            }
+#back-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(74, 74, 74, 0.5); /* Полупрозрачный серый */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-right: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Лёгкая тень */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Лёгкая обводка */
+}
+
+#back-button:hover {
+    background-color: rgba(90, 90, 90, 0.7); /* Немного темнее при наведении */
+}
+
+#back-button svg {
+    color: #d1d1d1; /* Цвет иконки */
+}
+
+@media (max-width: 572px) {
+    #back-button {
+        width: 36px; /* Уменьшаем размер кнопки */
+        height: 36px;
+        background-color: rgba(74, 74, 74, 0.5); /* Полупрозрачный серый */
+    }
+
+    #back-button svg {
+        width: 20px; /* Уменьшаем размер иконки */
+        height: 20px;
+    }
+}
+
             #chat.hide {
                 display: none;
             }
@@ -436,7 +555,10 @@
             <div id="search-results"></div>
         </div>
         <!-- Заменяем "Вы вошли как:" на кнопку с именем аккаунта -->
-        <button id="profile-button" onclick="toggleSettings()">
+<button id="profile-button" onclick="toggleSettings()" style="display: flex; align-items: center;">
+    <div id="avatar" style="width: 30px; height: 30px; border-radius: 50%; background-color: #4a4a4a; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+        <span id="avatar-initials" style="color: white; font-weight: bold;"></span>
+    </div>
     <span id="username-display"></span>
 </button>
         <div class="user-list" id="user-list"></div>
@@ -444,9 +566,12 @@
     </div>
     <div id="chat">
 <div id="header">
-    <div id="back-button" onclick="showContacts()" style="display: none;">←</div>
+    <div id="back-button" onclick="showContacts()" style="display: none;">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+</div>
     <h1 id="chat-title" style="display: none;"></h1>
-    <button id="logout-btn" onclick="logout()">Выйти</button>
 </div>
         <ul id="messages"></ul>
         <div id="messageInput">
@@ -539,6 +664,33 @@
             });
         }
 
+		function getInitials(username) {
+    const parts = username.split(' ');
+    return parts.map(part => part[0]).join('').toUpperCase();
+}
+
+function getColor(username) {
+    const colors = [
+        '#2c3e50', // Тёмно-синий
+        '#34495e', // Синий
+        '#1e3a5f', // Тёмно-синий (более насыщенный)
+        '#2c2c2c', // Тёмно-серый
+        '#4a4a4a', // Серый
+        '#3d3d3d', // Тёмный
+        '#5a5a5a', // Серый
+        '#454545', // Тёмный
+        '#333333', // Очень тёмный
+        '#1a535c', // Тёмный бирюзовый
+        '#2d5d4e', // Тёмный зелёный
+        '#4a306d', // Тёмный фиолетовый
+        '#5e2c5e', // Тёмный пурпурный
+        '#3a1c1c', // Тёмный бордовый
+        '#1c1f33', // Тёмный сине-фиолетовый
+    ];
+    const hash = username.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+    return colors[hash % colors.length];
+}
+
         // Добавление пользователя в контакты
         function addUser(user) {
             if (!userContacts.includes(user)) {
@@ -562,16 +714,19 @@
         }
 
         // Обновление списка контактов
-        function updateUserList() {
-            const userListElement = document.getElementById('user-list');
-            if (userListElement) {
-                userListElement.innerHTML = userContacts.map(user => `
-                    <div class="user-item" onclick="selectUser('${user}')">
-                        <span>${user}</span>
-                    </div>
-                `).join('');
-            }
-        }
+function updateUserList() {
+    const userListElement = document.getElementById('user-list');
+    if (userListElement) {
+        userListElement.innerHTML = userContacts.map(user => `
+            <div class="user-item" onclick="selectUser('${user}')">
+                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: ${getColor(user)}; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                    <span style="color: white; font-weight: bold;">${getInitials(user)}</span>
+                </div>
+                <span>${user}</span>
+            </div>
+        `).join('');
+    }
+}
 
         // Выбор пользователя для чата
 function selectUser(user) {
@@ -586,11 +741,10 @@ function selectUser(user) {
         document.getElementById('chat-title').textContent = 'Настройки';
         document.getElementById('messages').innerHTML = `
             <div class="settings-content">
-                <h2>Настройки</h2>
                 <div>
-                    <p>Здесь будут настройки вашего профиля.</p>
                     <button onclick="changeUsername()">Изменить ник</button>
                     <button onclick="changePin()">Изменить пин-код</button>
+					<button onclick="logout()" style="background-color: #a33a3a; margin-top: 20px;">Выйти</button>
                 </div>
             </div>
         `;
@@ -763,6 +917,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('username-display').textContent = username;
     document.getElementById('back-button').style.cursor = 'pointer';
 
+    // Генерируем инициалы и цвет фона
+    const initials = getInitials(username);
+    const color = getColor(username);
+    document.getElementById('avatar').style.background = color;
+    document.getElementById('avatar-initials').textContent = initials;
+
     // Загружаем контакты
     loadContacts();
 
@@ -780,6 +940,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('chat-title').style.display = 'none';
     }
 });
+
+function updateUserList() {
+    const userListElement = document.getElementById('user-list');
+    if (userListElement) {
+        userListElement.innerHTML = userContacts.map(user => `
+            <div class="user-item" onclick="selectUser('${user}')">
+                <div style="background: ${getColor(user)};">
+                    <span>${getInitials(user)}</span>
+                </div>
+                <span>${user}</span>
+            </div>
+        `).join('');
+    }
+}
 		
     </script>
 </body>
