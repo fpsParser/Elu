@@ -196,6 +196,31 @@
             background-color: #922b2b;
         }
 
+.settings-content {
+    padding: 20px;
+    color: #d1d1d1;
+}
+
+.settings-content h2 {
+    margin-bottom: 20px;
+}
+
+.settings-content button {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+}
+
+.settings-content button:hover {
+    background-color: #5a5a5a;
+}
+
         .user-list {
             margin-top: 10px;
         }
@@ -411,7 +436,9 @@
             <div id="search-results"></div>
         </div>
         <!-- Заменяем "Вы вошли как:" на кнопку с именем аккаунта -->
-        <button id="profile-button"><span id="username-display"></span></button>
+        <button id="profile-button" onclick="toggleSettings()">
+    <span id="username-display"></span>
+</button>
         <div class="user-list" id="user-list"></div>
         <div id="error-message" class="error-message"></div>
     </div>
@@ -429,6 +456,9 @@
     </div>
 
     <script>
+	
+	const SETTINGS_USER = "@settings"; // Фиктивный пользователь для настроек
+	
         const serverUrl = 'https://my-chat-app-server-r9rx.onrender.com';
         const socket = io(serverUrl);
 
@@ -547,30 +577,53 @@
 function selectUser(user) {
     currentChatUser = user;
 
-    // Сохраняем выбранный контакт в localStorage
-    localStorage.setItem('selectedContact', user);
-
     // Показываем стрелочку и заголовок
     document.getElementById('back-button').style.display = 'block';
     document.getElementById('chat-title').style.display = 'block';
-    document.getElementById('chat-title').textContent = `Чат с ${user}`;
 
-    // Загружаем сообщения
-    loadMessages(user);
+    if (user === SETTINGS_USER) {
+        // Если выбран "чат" настроек
+        document.getElementById('chat-title').textContent = 'Настройки';
+        document.getElementById('messages').innerHTML = `
+            <div class="settings-content">
+                <h2>Настройки</h2>
+                <div>
+                    <p>Здесь будут настройки вашего профиля.</p>
+                    <button onclick="changeUsername()">Изменить ник</button>
+                    <button onclick="changePin()">Изменить пин-код</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('messageInput').style.display = 'none'; // Скрываем поле ввода сообщений
+    } else {
+        // Если выбран обычный чат
+        document.getElementById('chat-title').textContent = `Чат с ${user}`;
+        document.getElementById('messages').innerHTML = ''; // Очищаем сообщения
+        document.getElementById('messageInput').style.display = 'flex'; // Показываем поле ввода сообщений
+        loadMessages(user); // Загружаем сообщения
+    }
 
     // Убираем выделение у всех контактов
     const userItems = document.querySelectorAll('.user-item');
     userItems.forEach(item => item.classList.remove('selected'));
 
-    // Выделяем выбранный контакт
-    const selectedUserItem = Array.from(userItems).find(item => item.textContent.includes(user));
-    if (selectedUserItem) {
-        selectedUserItem.classList.add('selected');
+    // Выделяем выбранный контакт (если это не настройки)
+    if (user !== SETTINGS_USER) {
+        const selectedUserItem = Array.from(userItems).find(item => item.textContent.includes(user));
+        if (selectedUserItem) {
+            selectedUserItem.classList.add('selected');
+        }
     }
 
-    // Скрываем список контактов и показываем чат
-    document.getElementById('sidebar').classList.remove('active');
-    document.getElementById('chat').classList.remove('hide');
+    // Адаптация для мобильных устройств
+    if (window.innerWidth <= 572) {
+        document.getElementById('sidebar').classList.remove('active');
+        document.getElementById('chat').classList.remove('hide');
+    }
+}
+
+function toggleSettings() {
+    selectUser(SETTINGS_USER); // Открываем "чат" настроек
 }
 
         // Показать контакты
@@ -585,7 +638,7 @@ function showContacts() {
 
     // Сбрасываем активный контакт
     currentChatUser = null;
-    localStorage.removeItem('selectedContact'); // Очищаем выбранный контакт
+    localStorage.removeItem('selectedContact');
     document.getElementById('chat-title').textContent = '';
     document.getElementById('messages').innerHTML = '';
 
