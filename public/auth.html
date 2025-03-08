@@ -23,7 +23,7 @@
             text-align: center;
             transition: opacity 0.5s ease-in-out;
             position: relative; /* Добавлено для z-index */
-            z-index: 1; /* Форма поверх спиннера */
+            z-index: 1; 
         }
 
         .auth-form.hidden {
@@ -187,13 +187,13 @@
             left: calc(50% - 49px);
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            display: none; /* Скрываем спиннер по умолчанию */
-            z-index: 2; /* Спиннер поверх формы */
+            display: none; 
+            z-index: 2; 
         }
 
         .cssload-bell.visible {
             opacity: 1;
-            display: block; /* Показываем спиннер */
+            display: block; 
         }
 
         .cssload-circle {
@@ -260,10 +260,10 @@
             <span class="toggle-password" onclick="togglePassword()">🕶️</span>
         </div>
 
-        <!-- Контейнер для кнопки -->
+        
         <div id="auth-button-container"></div>
 
-        <!-- Текст для переключения режимов -->
+        
         <div class="switch" id="switch-mode">Зарегистрироваться</div>
         <div id="error" class="error"></div>
     </div>
@@ -381,18 +381,18 @@
             const result = await response.json();
 
             if (result.success) {
-                // Плавно скрываем форму
+                
                 const authForm = document.querySelector('.auth-form');
                 authForm.classList.add('hidden');
 
-                // Показываем спиннер
+                
                 const spinner = document.querySelector('.cssload-bell');
                 spinner.classList.add('visible');
 
                 // Сохраняем имя пользователя
                 localStorage.setItem('username', username);
 
-                // Ждем 3 секунды (для демонстрации анимации)
+                
                 setTimeout(() => {
                     window.location.href = './index.html';
                 }, 3000);
