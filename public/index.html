@@ -153,15 +153,41 @@
         flex-direction: column;
     }
 
-    #header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        background-color: #1e1e1e;
-        border-bottom: 1px solid #3a3a3a;
-    }
+#header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #3a3a3a;
+}
 
+#chat-header {
+    flex: 1; 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+#chat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4a4a4a; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: bold;
+    font-size: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+#chat-username {
+    margin-left: 10px; 
+    font-size: 16px;
+    font-weight: bold;
+    color: #d1d1d1;
+}
     #messages {
         flex: 1;
         padding: 10px;
@@ -428,6 +454,41 @@
         margin-left: 8px;
         border-bottom: 2px solid #242424;
     }
+	
+.scroll-container {
+    overflow-y: auto;
+}
+
+.scroll-container::-webkit-scrollbar {
+    width: 2px; 
+    transition: width 0.2s ease;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #1c7430;
+    border-radius: 4px;
+    transition: width 0.2s ease, background 0.2s ease;
+}
+
+.scroll-container::-webkit-scrollbar-track:hover::-webkit-scrollbar,
+.scroll-container::-webkit-scrollbar-thumb:hover::-webkit-scrollbar {
+    width: 6px; 
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #218838;
+}
+
+/* Для Firefox */
+.scroll-container {
+    scrollbar-width: thin; 
+    scrollbar-color: #1c7430 #1e1e1e; 
+}
+	
 
 #back-button {
     width: 40px;
@@ -521,7 +582,7 @@
             <button id="search-button" onclick="searchUser()">
                 <img src="https://img.icons8.com/fluency-systems-regular/50/search--v1.png" alt="search--v1"/>
             </button>
-            <div id="search-results"></div>
+            <div id="search-results" class="scroll-container"></div>
         </div>
         
 <button id="profile-button" onclick="toggleSettings()" style="display: flex; align-items: center;">
@@ -530,26 +591,29 @@
     </div>
     <span id="username-display"></span>
 </button>
-        <div class="user-list" id="user-list"></div>
+        <div class="user-list scroll-container" id="user-list"></div>
         <div id="error-message" class="error-message"></div>
     </div>
     <div id="chat">
 <div id="header">
-<div id="back-button" onclick="showContacts()" style="display: none;">
-    <div class="back-button-circle">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-    </div>
-</div>
-    <h1 id="chat-title" style="display: none;"></h1>
-</div>
-        <ul id="messages"></ul>
-        <div id="messageInput">
-            <input id="message" type="text" placeholder="Введите сообщение">
-            <button onclick="sendMessage()">Отправить</button>
+    <div id="back-button" onclick="showContacts()" style="display: none;">
+        <div class="back-button-circle">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
         </div>
     </div>
+    <div id="chat-header">
+        <div id="chat-avatar"></div>
+        <span id="chat-username"></span>
+    </div>
+    <h1 id="chat-title" style="display: none;"></h1>
+</div>
+<ul class="scroll-container" id="messages"></ul>
+<div id="messageInput">
+    <input id="message" type="text" placeholder="Введите сообщение">
+    <button onclick="sendMessage()">Отправить</button>
+</div>
 
     <script>
 	
@@ -579,7 +643,7 @@
             });
 
             const data = await response.json();
-            console.log('Контакты:', data); // Логируем данные
+            console.log('Контакты:', data); // Логируем
             if (data.success) {
                 userContacts = data.contacts;
                 updateUserList();
@@ -642,59 +706,57 @@
 
 function getColor(username) {
     const colors = [
-        '#2c3e50', // Тёмносиний
-        '#34495e', // счиний
-        '#1e3a5f', // тёмносиний (насыщенный)
-        '#2c2c2c', // тёмносерый
-        '#4a4a4a', // серый
+        '#4a4a4a', // Серый
         '#3d3d3d', // Тёмный = черномазый
-        '#5a5a5a', // серый ну че ты там
-        '#454545', // Тёмный
-        '#333333', // очень тёмный
-        '#1a535c', // тёмный бирюзовый
-        '#2d5d4e', // тёмный зелёный
-        '#4a306d', // тёмный фиолетовый
-        '#5e2c5e', // тёмный пурпурный
-        '#3a1c1c', // тёмный бордовый
-        '#1c1f33', // тёмный синефиолетовый
+        '#1c1f33', // синий
+        '#1a535c', // бирюзовый
+        '#2d5d4e', // зелёный
+        '#4a306d', // фиолетовый
+        '#5e2c5e', // пурпурный
+        '#3a1c1c', // бордовый
+		'#1e3a5f', // тёмносиний (насыщенный)
+		'#5a5a5a', // серый ну че ты там
+		
     ];
     const hash = username.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
     return colors[hash % colors.length];
 }
 
         
-        function addUser(user) {
-            if (!userContacts.includes(user)) {
-                fetch(`${serverUrl}/add-contact`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, contact: user }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        userContacts.push(user);
-                        updateUserList();
-                        document.getElementById('search').value = '';
-                        document.getElementById('search-results').innerHTML = '';
-                    }
-                });
+function addUser(user) {
+    if (!userContacts.includes(user)) {
+        fetch(`${serverUrl}/add-contact`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, contact: user }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                userContacts.push(user);
+                updateUserList();
+                document.getElementById('search').value = '';
+                document.getElementById('search-results').innerHTML = '';
             }
-        }
+        });
+    } else {
+        console.log('Пользователь уже добавлен:', user);
+    }
+}
 
         // Обновление списка контактов
 function updateUserList() {
     const userListElement = document.getElementById('user-list');
     if (userListElement) {
         userListElement.innerHTML = userContacts.map(user => `
-<div class="user-item">
-    <div class="avatar" style="background-color: #4a4a4a;">
-        <span>AB</span>
-    </div>
-    <span>Username</span>
-</div>
+            <div class="user-item" onclick="selectUser('${user}')">
+                <div style="background: ${getColor(user)};">
+                    <span>${getInitials(user)}</span>
+                </div>
+                <span>${user}</span>
+            </div>
         `).join('');
     }
 }
@@ -703,32 +765,46 @@ function updateUserList() {
 function selectUser(user) {
     currentChatUser = user;
 
-    
     document.getElementById('back-button').style.display = 'block';
-    document.getElementById('chat-title').style.display = 'block';
+
+    // Обновляем заголовок чата
+    const chatAvatar = document.getElementById('chat-avatar');
+    const chatUsername = document.getElementById('chat-username');
+    const chatTitle = document.getElementById('chat-title');
 
     if (user === SETTINGS_USER) {
-        
-        document.getElementById('chat-title').textContent = 'Настройки';
+        chatTitle.textContent = 'Настройки';
+        chatTitle.style.display = 'block';
         document.getElementById('messages').innerHTML = `
             <div class="settings-content">
                 <div>
                     <button onclick="changeUsername()">Изменить ник</button>
                     <button onclick="changePin()">Изменить пин-код</button>
-					<button onclick="logout()" style="background-color: #a33a3a; margin-top: 20px;">Выйти</button>
+                    <button onclick="logout()" style="background-color: #a33a3a; margin-top: 20px;">Выйти</button>
                 </div>
             </div>
         `;
-        document.getElementById('messageInput').style.display = 'none'; 
+        document.getElementById('messageInput').style.display = 'none';
+
+        chatAvatar.style.display = 'none';
+        chatUsername.style.display = 'none';
     } else {
-        
-        document.getElementById('chat-title').textContent = `Чат с ${user}`;
+        // Если выбран обычный чат
+        chatTitle.style.display = 'none'; 
         document.getElementById('messages').innerHTML = ''; 
         document.getElementById('messageInput').style.display = 'flex'; 
-        loadMessages(user); 
+
+        // Устанавливаем аватарку и ник
+        chatAvatar.innerHTML = `<span>${getInitials(user)}</span>`;
+        chatAvatar.style.backgroundColor = getColor(user); // Цвет аватарки
+        chatUsername.textContent = user;
+
+        chatAvatar.style.display = 'flex';
+        chatUsername.style.display = 'block';
+
+        loadMessages(user); // Загружаем сообщения
     }
 
-    // Убираем выделение у всех контактов
     const userItems = document.querySelectorAll('.user-item');
     userItems.forEach(item => item.classList.remove('selected'));
 
@@ -753,21 +829,24 @@ function toggleSettings() {
 
         
 function showContacts() {
-    
     document.getElementById('sidebar').classList.add('active');
     document.getElementById('chat').classList.add('hide');
 
-    
     document.getElementById('back-button').style.display = 'none';
     document.getElementById('chat-title').style.display = 'none';
 
-    // Сбрасываем активный контакт
+    const chatAvatar = document.getElementById('chat-avatar');
+    const chatUsername = document.getElementById('chat-username');
+    chatAvatar.innerHTML = ''; 
+    chatUsername.textContent = ''; // Очищаем ник
+    chatAvatar.style.display = 'none'; 
+    chatUsername.style.display = 'none'; 
+
     currentChatUser = null;
     localStorage.removeItem('selectedContact');
     document.getElementById('chat-title').textContent = '';
     document.getElementById('messages').innerHTML = '';
-
-    
+	
     const userItems = document.querySelectorAll('.user-item');
     userItems.forEach(item => item.classList.remove('selected'));
 }
@@ -871,7 +950,7 @@ function logout() {
 
         // Обработка обновления контактов
         socket.on('update-contacts', (contacts) => {
-            userContacts = contacts; // Обновляем список контактов
+            userContacts = contacts; 
             updateUserList(); 
             console.log('Контакты обновлены:', contacts); // Для отладки
         });
