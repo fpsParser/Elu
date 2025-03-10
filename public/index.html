@@ -193,7 +193,6 @@
     flex: 1;
     padding: 10px;
     overflow-y: auto;
-    border-bottom: 1px solid #3a3a3a;
     display: flex;
     flex-direction: column;
     scrollbar-gutter: stable; /* Резервируем место для скроллбара */
@@ -265,6 +264,7 @@
         .user-list {
             margin-top: 10px;
             overflow-y: auto;
+			overflow-x: hidden; /* Убираем горизонтальную прокрутку */
             flex: 1;
             padding-right: 20px;
             scrollbar-gutter: stable;
@@ -295,16 +295,18 @@
             line-height: 1;
         }
 
-        .user-item {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: none;
-            transition: background-color 0.2s ease;
-            border-radius: 6px;
-        }
+.user-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: none;
+    transition: background-color 0.2s ease;
+    border-radius: 6px;
+    margin-bottom: 5px; /* Отступ между контактами */
+    width: calc(100% - 6px); /* Удлиняем контакты по горизонтали, учитывая ширину скроллбара */
+}
 
         .user-item:hover {
             background-color: #2e2e2e;
