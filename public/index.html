@@ -197,40 +197,53 @@
     flex-direction: column;
     scrollbar-gutter: stable; /* Резервируем место для скроллбара */
 }
-        #messageInput {
-            display: flex;
-            padding: 10px;
-            background-color: #1e1e1e;
-        }
+#messageInput {
+    display: flex;
+    align-items: stretch;
+    padding: 10px;
+    background-color: #1e1e1e;
+    border-radius: 5px;
+}
 
-        #message {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background-color: #2d2d2d;
-            color: #ffffff;
-            outline: none;
-        }
+#message {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px 0 0 5px;
+    background-color: #2d2d2d;
+    color: #ffffff;
+    outline: none;
+    height: 32px;
+    box-sizing: border-box;
+    margin: 0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 
-        #message:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
-        }
+#message:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
 
-        button {
-            padding: 10px 20px;
-            margin-left: 10px;
-            border: none;
-            background-color: #28a745;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+#send-button {
+    width: 40px;
+    height: 32px;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    background-color: #333;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    transition: background-color 0.2s ease;
+}
 
-        button:hover {
-            background-color: #218838;
-        }
+#send-button:hover {
+    background-color: #3a3a3a;
+}
 
         #logout-btn {
             background-color: #a33a3a;
@@ -589,9 +602,11 @@
         </div>
         <ul class="scroll-container" id="messages"></ul>
         <div id="messageInput">
-            <input id="message" type="text" placeholder="Введите сообщение">
-            <button onclick="sendMessage()">Отправить</button>
-        </div>
+    <input id="message" type="text" placeholder="Введите сообщение">
+    <button id="send-button" onclick="sendMessage()">
+  <img src="images/send-icon.png" alt="Отправить" width="24" height="24">
+</button>
+		</div>
     </div>
 
     <script>
