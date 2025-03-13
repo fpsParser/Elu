@@ -11,12 +11,13 @@
   "dependencies": {
     "express": "^4.21.2",
     "firebase": "^10.7.0",
-	"mongoose": "^8.0.0",
+    "mongoose": "^8.0.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "electron": "^28.1.0",
-    "electron-builder": "^24.6.4"
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.2"
   },
   "build": {
     "productName": "My Chat App",
@@ -25,12 +26,15 @@
       "output": "dist"
     },
     "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
+      "target": "nsis"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   }
 }

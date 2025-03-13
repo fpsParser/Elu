@@ -42,6 +42,21 @@
             }
         }
 
+
+.user-item.unread {
+    background-color: #2e2e2e;
+    border-left: 4px solid #28a745;
+}
+
+.unread-count {
+    background-color: #28a745;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    margin-left: auto;
+}
+
         #search-container {
             display: flex;
             align-items: stretch;
@@ -625,22 +640,31 @@
         document.getElementById('back-button').style.cursor = 'pointer';
         let userContacts = [];
 
-        async function loadContacts() {
-            const response = await fetch(`${serverUrl}/get-contacts`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username }),
-            });
+async function loadContacts() {
+    const username = localStorage.getItem('username');
+    if (!username) {
+        console.error('Имя пользователя не найдено в localStorage');
+        return;
+    }
 
-            const data = await response.json();
-            console.log('Контакты:', data);
-            if (data.success) {
-                userContacts = data.contacts;
-                updateUserList();
-            }
-        }
+    console.log('Текущий пользователь:', username); // Добавь этот console.log
+    const response = await fetch(`${serverUrl}/get-contacts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+    });
+
+    const data = await response.json();
+    console.log('Контакты:', data);
+    if (data.success) {
+        userContacts = data.contacts;
+        updateUserList();
+    } else {
+        console.error('Ошибка при загрузке контактов:', data.message);
+    }
+}
 
         loadContacts();
 
@@ -689,18 +713,26 @@
             });
         }
 
-        function getInitials(username) {
-            const parts = username.split(' ');
-            return parts.map(part => part[0]).join('').toUpperCase();
-        }
+function getInitials(username) {
+    if (!username || typeof username !== 'string') {
+        console.error('Некорректное имя пользователя:', username);
+        return '?';
+    }
+    const parts = username.split(' ');
+    return parts.map(part => part[0]).join('').toUpperCase();
+}
 
-        function getColor(username) {
-            const colors = [
-                '#4a4a4a', '#3d3d3d', '#1c1f33', '#1a535c', '#2d5d4e', '#4a306d', '#5e2c5e', '#3a1c1c', '#1e3a5f', '#5a5a5a'
-            ];
-            const hash = username.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
-            return colors[hash % colors.length];
-        }
+function getColor(username) {
+    if (!username || typeof username !== 'string') {
+        console.error('Некорректное имя пользователя:', username);
+        return '#4a4a4a'; // Возвращаем цвет по умолчанию
+    }
+    const colors = [
+        '#4a4a4a', '#3d3d3d', '#1c1f33', '#1a535c', '#2d5d4e', '#4a306d', '#5e2c5e', '#3a1c1c', '#1e3a5f', '#5a5a5a'
+    ];
+    const hash = username.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+    return colors[hash % colors.length];
+}
 
         function addUser(user) {
             if (!userContacts.includes(user)) {
@@ -725,21 +757,43 @@
             }
         }
 
-        function updateUserList() {
-            const userListElement = document.getElementById('user-list');
-            if (userListElement) {
-                userListElement.innerHTML = userContacts.map(user => `
-                    <div class="user-item" onclick="selectUser('${user}')">
-                        <div style="background: ${getColor(user)};">
-                            <span>${getInitials(user)}</span>
-                        </div>
-                        <span>${user}</span>
-                    </div>
-                `).join('');
+function updateUserList() {
+    console.log('Список контактов:', userContacts); // Добавь этот console.log
+    const userListElement = document.getElementById('user-list');
+    if (userListElement) {
+        userListElement.innerHTML = userContacts.map(contact => {
+            if (!contact || typeof contact !== 'object' || !contact.username || typeof contact.username !== 'string') {
+                console.error('Некорректный контакт:', contact);
+                return ''; // Пропускаем некорректные данные
             }
-        }
 
-        function selectUser(user) {
+            const username = contact.username;
+            const unreadCount = contact.unreadCount || 0;
+
+            return `
+                <div class="user-item ${unreadCount > 0 ? 'unread' : ''}" onclick="selectUser('${username}')">
+                    <div style="background: ${getColor(username)};">
+                        <span>${getInitials(username)}</span>
+                    </div>
+                    <span>${username}</span>
+                    ${unreadCount > 0 ? `<span class="unread-count">${unreadCount}</span>` : ''}
+                </div>
+            `;
+        }).join('');
+    } else {
+        console.error('Элемент user-list не найден');
+    }
+}
+
+        async function selectUser(user) {
+    // Сбрасываем счетчик непрочитанных сообщений
+    const response = await fetch(`${serverUrl}/reset-unread`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, contact: user }),
+    });
             currentChatUser = user;
 
             document.getElementById('back-button').style.display = 'block';
@@ -915,47 +969,36 @@
 
         socket.emit('register-user', username);
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const username = localStorage.getItem('username');
-            if (!username) {
-                window.location.href = './auth.html';
-            }
+document.addEventListener('DOMContentLoaded', () => {
+    const username = localStorage.getItem('username');
+    if (!username) {
+        window.location.href = './auth.html';
+    }
 
-            document.getElementById('username-display').textContent = username;
-            document.getElementById('back-button').style.cursor = 'pointer';
+    document.getElementById('username-display').textContent = username;
+    document.getElementById('back-button').style.cursor = 'pointer';
 
-            const initials = getInitials(username);
-            const color = getColor(username);
-            document.getElementById('avatar').style.background = color;
-            document.getElementById('avatar-initials').textContent = initials;
+    const initials = getInitials(username);
+    const color = getColor(username);
+    document.getElementById('avatar').style.background = color;
+    document.getElementById('avatar-initials').textContent = initials;
 
-            loadContacts();
+    // Загружаем контакты при загрузке страницы
+    loadContacts();
 
-            const selectedContact = localStorage.getItem('selectedContact');
-            if (selectedContact) {
-                selectUser(selectedContact);
-            } else {
-                document.getElementById('sidebar').classList.add('active');
-                document.getElementById('chat').classList.add('hide');
+    const selectedContact = localStorage.getItem('selectedContact');
+    if (selectedContact) {
+        selectUser(selectedContact);
+    } else {
+        document.getElementById('sidebar').classList.add('active');
+        document.getElementById('chat').classList.add('hide');
 
-                document.getElementById('back-button').style.display = 'none';
-                document.getElementById('chat-title').style.display = 'none';
-            }
-        });
+        document.getElementById('back-button').style.display = 'none';
+        document.getElementById('chat-title').style.display = 'none';
+    }
+});
 
-        function updateUserList() {
-            const userListElement = document.getElementById('user-list');
-            if (userListElement) {
-                userListElement.innerHTML = userContacts.map(user => `
-                    <div class="user-item" onclick="selectUser('${user}')">
-                        <div style="background: ${getColor(user)};">
-                            <span>${getInitials(user)}</span>
-                        </div>
-                        <span>${user}</span>
-                    </div>
-                `).join('');
-            }
-        }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const scrollContainers = document.querySelectorAll('.scroll-container');
