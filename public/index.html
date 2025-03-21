@@ -648,21 +648,26 @@ async function loadContacts() {
     }
 
     console.log('Текущий пользователь:', username); // Добавь этот console.log
-    const response = await fetch(`${serverUrl}/get-contacts`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username }),
-    });
 
-    const data = await response.json();
-    console.log('Контакты:', data);
-    if (data.success) {
-        userContacts = data.contacts;
-        updateUserList();
-    } else {
-        console.error('Ошибка при загрузке контактов:', data.message);
+    try {
+        const response = await fetch(`${serverUrl}/get-contacts`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username }),
+        });
+
+        const data = await response.json();
+        console.log('Контакты:', data);
+        if (data.success) {
+            userContacts = data.contacts; // Обновляем список контактов
+            updateUserList(); // Обновляем интерфейс
+        } else {
+            console.error('Ошибка при загрузке контактов:', data.message);
+        }
+    } catch (error) {
+        console.error('Ошибка при загрузке контактов:', error);
     }
 }
 
@@ -734,41 +739,43 @@ function getColor(username) {
     return colors[hash % colors.length];
 }
 
-        function addUser(user) {
-            if (!userContacts.includes(user)) {
-                fetch(`${serverUrl}/add-contact`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, contact: user }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        userContacts.push(user);
-                        updateUserList();
-                        document.getElementById('search').value = '';
-                        document.getElementById('search-results').innerHTML = '';
-                    }
-                });
-            } else {
-                console.log('Пользователь уже добавлен:', user);
-            }
+async function addUser(user) {
+    if (!userContacts.some(contact => contact.username === user)) {
+        const response = await fetch(`${serverUrl}/add-contact`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, contact: user }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            // Добавляем нового пользователя в список контактов
+            userContacts.push({ username: user, unreadCount: 0 });
+            updateUserList(); // Обновляем интерфейс
+
+            // Очищаем поле поиска и результаты
+            document.getElementById('search').value = '';
+            document.getElementById('search-results').innerHTML = '';
         }
+    } else {
+        console.log('Пользователь уже добавлен:', user);
+    }
+}
 
 function updateUserList() {
-    console.log('Список контактов:', userContacts); // Добавь этот console.log
     const userListElement = document.getElementById('user-list');
     if (userListElement) {
         userListElement.innerHTML = userContacts.map(contact => {
+            // Проверяем, что contact — это объект и у него есть поле username
             if (!contact || typeof contact !== 'object' || !contact.username || typeof contact.username !== 'string') {
                 console.error('Некорректный контакт:', contact);
                 return ''; // Пропускаем некорректные данные
             }
 
-            const username = contact.username;
-            const unreadCount = contact.unreadCount || 0;
+            const username = contact.username; // Извлекаем username из объекта
+            const unreadCount = contact.unreadCount || 0; // Извлекаем unreadCount (если есть)
 
             return `
                 <div class="user-item ${unreadCount > 0 ? 'unread' : ''}" onclick="selectUser('${username}')">
@@ -785,69 +792,102 @@ function updateUserList() {
     }
 }
 
-        async function selectUser(user) {
-    // Сбрасываем счетчик непрочитанных сообщений
-    const response = await fetch(`${serverUrl}/reset-unread`, {
+async function selectUser(user) {
+    // Сбрасываем счетчик непрочитанных сообщений (без ожидания)
+    fetch(`${serverUrl}/reset-unread`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, contact: user }),
+    }).then(() => {
+        // Обновляем счетчик в интерфейсе
+        updateContactUnreadCount(user, 0);
     });
-            currentChatUser = user;
 
-            document.getElementById('back-button').style.display = 'block';
+    // Обновляем текущего пользователя
+    currentChatUser = user;
 
-            const chatAvatar = document.getElementById('chat-avatar');
-            const chatUsername = document.getElementById('chat-username');
-            const chatTitle = document.getElementById('chat-title');
+    // Показываем кнопку "Назад"
+    document.getElementById('back-button').style.display = 'block';
 
-            if (user === SETTINGS_USER) {
-                chatTitle.textContent = 'Настройки';
-                chatTitle.style.display = 'block';
-                document.getElementById('messages').innerHTML = `
-                    <div class="settings-content">
-                        <div>
-                            <button onclick="changeUsername()">Изменить ник</button>
-                            <button onclick="changePin()">Изменить пин-код</button>
-                            <button onclick="logout()" style="background-color: #a33a3a; margin-top: 20px;">Выйти</button>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('messageInput').style.display = 'none';
+    const chatAvatar = document.getElementById('chat-avatar');
+    const chatUsername = document.getElementById('chat-username');
+    const chatTitle = document.getElementById('chat-title');
 
-                chatAvatar.style.display = 'none';
-                chatUsername.style.display = 'none';
-            } else {
-                chatTitle.style.display = 'none';
-                document.getElementById('messages').innerHTML = '';
-                document.getElementById('messageInput').style.display = 'flex';
+    if (user === SETTINGS_USER) {
+        // Если это настройки, показываем соответствующий интерфейс
+        chatTitle.textContent = 'Настройки';
+        chatTitle.style.display = 'block';
+        document.getElementById('messages').innerHTML = `
+            <div class="settings-content">
+                <div>
+                    <button onclick="changeUsername()">Изменить ник</button>
+                    <button onclick="changePin()">Изменить пин-код</button>
+                    <button onclick="logout()" style="background-color: #a33a3a; margin-top: 20px;">Выйти</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('messageInput').style.display = 'none';
 
-                chatAvatar.innerHTML = `<span>${getInitials(user)}</span>`;
-                chatAvatar.style.backgroundColor = getColor(user);
-                chatUsername.textContent = user;
+        chatAvatar.style.display = 'none';
+        chatUsername.style.display = 'none';
+    } else {
+        // Если это обычный контакт, показываем чат
+        chatTitle.style.display = 'none';
+        document.getElementById('messages').innerHTML = '';
+        document.getElementById('messageInput').style.display = 'flex';
 
-                chatAvatar.style.display = 'flex';
-                chatUsername.style.display = 'block';
+        chatAvatar.innerHTML = `<span>${getInitials(user)}</span>`;
+        chatAvatar.style.backgroundColor = getColor(user);
+        chatUsername.textContent = user;
 
-                loadMessages(user);
-            }
+        chatAvatar.style.display = 'flex';
+        chatUsername.style.display = 'block';
 
-            const userItems = document.querySelectorAll('.user-item');
-            userItems.forEach(item => item.classList.remove('selected'));
+        // Загружаем сообщения для выбранного пользователя
+        loadMessages(user);
+    }
 
-            if (user !== SETTINGS_USER) {
-                const selectedUserItem = Array.from(userItems).find(item => item.textContent.includes(user));
-                if (selectedUserItem) {
-                    selectedUserItem.classList.add('selected');
+    // Обновляем выделение контакта
+    const userItems = document.querySelectorAll('.user-item');
+    userItems.forEach(item => item.classList.remove('selected'));
+
+    if (user !== SETTINGS_USER) {
+        const selectedUserItem = Array.from(userItems).find(item => item.textContent.includes(user));
+        if (selectedUserItem) {
+            selectedUserItem.classList.add('selected');
+        }
+    }
+
+    // Если экран маленький, скрываем боковую панель
+    if (window.innerWidth <= 572) {
+        document.getElementById('sidebar').classList.remove('active');
+        document.getElementById('chat').classList.remove('hide');
+    }
+}
+
+function updateContactUnreadCount(contactUsername, unreadCount) {
+    const userItems = document.querySelectorAll('.user-item');
+    userItems.forEach(item => {
+        if (item.textContent.includes(contactUsername)) {
+            const unreadCountElement = item.querySelector('.unread-count');
+            if (unreadCount > 0) {
+                if (unreadCountElement) {
+                    unreadCountElement.textContent = unreadCount;
+                } else {
+                    item.innerHTML += `<span class="unread-count">${unreadCount}</span>`;
                 }
-            }
-
-            if (window.innerWidth <= 572) {
-                document.getElementById('sidebar').classList.remove('active');
-                document.getElementById('chat').classList.remove('hide');
+                item.classList.add('unread');
+            } else {
+                if (unreadCountElement) {
+                    unreadCountElement.remove();
+                }
+                item.classList.remove('unread');
             }
         }
+    });
+}
 
         function toggleSettings() {
             selectUser(SETTINGS_USER);
@@ -876,27 +916,27 @@ function updateUserList() {
             userItems.forEach(item => item.classList.remove('selected'));
         }
 
-        async function loadMessages(user) {
-            const messagesElement = document.getElementById('messages');
+async function loadMessages(user, limit = 50) {
+    const messagesElement = document.getElementById('messages');
 
-            const response = await fetch(`${serverUrl}/get-messages`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, contact: user }),
-            });
+    const response = await fetch(`${serverUrl}/get-messages`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, contact: user, limit }),
+    });
 
-            const data = await response.json();
-            if (data.success) {
-                messagesElement.innerHTML = data.messages.map(msg => `
-                    <div class="message ${msg.from === username ? 'me' : 'other'}">
-                        ${msg.message}
-                    </div>
-                `).join('');
-                messagesElement.scrollTop = messagesElement.scrollHeight;
-            }
-        }
+    const data = await response.json();
+    if (data.success) {
+        messagesElement.innerHTML = data.messages.map(msg => `
+            <div class="message ${msg.from === username ? 'me' : 'other'}">
+                ${msg.message}
+            </div>
+        `).join('');
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    }
+}
 
         function sendMessage() {
             const message = document.getElementById('message').value;
@@ -944,28 +984,32 @@ function updateUserList() {
             }
         });
 
-        socket.on('private-message', (data) => {
-            if (data.from === currentChatUser) {
-                const messagesElement = document.getElementById('messages');
-                const newMessage = document.createElement('div');
-                newMessage.className = `message other`;
-                newMessage.textContent = data.message;
-                messagesElement.appendChild(newMessage);
+socket.on('private-message', (data) => {
+    if (data.from === currentChatUser) {
+        const messagesElement = document.getElementById('messages');
+        const newMessage = document.createElement('div');
+        newMessage.className = `message other`;
+        newMessage.textContent = data.message;
+        messagesElement.appendChild(newMessage);
 
-                messagesElement.scrollTop = messagesElement.scrollHeight;
-            } else {
-                if (!userContacts.includes(data.from)) {
-                    userContacts.push(data.from);
-                    updateUserList();
-                }
-            }
-        });
-
-        socket.on('update-contacts', (contacts) => {
-            userContacts = contacts;
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    } else {
+        if (!userContacts.includes(data.from)) {
+            userContacts.push(data.from);
             updateUserList();
-            console.log('Контакты обновлены:', contacts);
-        });
+        }
+        // Обновляем счетчик непрочитанных сообщений
+        updateContactUnreadCount(data.from, (userContacts.find(contact => contact.username === data.from)?.unreadCount || 0) + 1);
+    }
+});
+
+socket.on('update-contacts', (contacts) => {
+    userContacts = contacts.map(contact => ({
+        username: contact,
+        unreadCount: 0, // Можно добавить логику для unreadCount, если нужно
+    }));
+    updateUserList(); // Обновляем интерфейс
+});
 
         socket.emit('register-user', username);
 
