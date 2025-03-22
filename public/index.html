@@ -740,6 +740,7 @@ function getColor(username) {
 }
 
 async function addUser(user) {
+    // Проверяем, что контакт ещё не добавлен
     if (!userContacts.some(contact => contact.username === user)) {
         const response = await fetch(`${serverUrl}/add-contact`, {
             method: 'POST',
@@ -751,13 +752,11 @@ async function addUser(user) {
 
         const data = await response.json();
         if (data.success) {
-            // Добавляем нового пользователя в список контактов
-            userContacts.push({ username: user, unreadCount: 0 });
-            updateUserList(); // Обновляем интерфейс
-
             // Очищаем поле поиска и результаты
             document.getElementById('search').value = '';
             document.getElementById('search-results').innerHTML = '';
+
+            // Не обновляем список контактов вручную, ждём обновления через WebSocket
         }
     } else {
         console.log('Пользователь уже добавлен:', user);
@@ -1004,10 +1003,23 @@ socket.on('private-message', (data) => {
 });
 
 socket.on('update-contacts', (contacts) => {
+    // Обновляем список контактов, убирая дубликаты
     userContacts = contacts.map(contact => ({
         username: contact,
         unreadCount: 0, // Можно добавить логику для unreadCount, если нужно
     }));
+
+    // Убираем дубликаты из списка
+    const uniqueContacts = [];
+    const seen = new Set();
+    for (const contact of userContacts) {
+        if (!seen.has(contact.username)) {
+            seen.add(contact.username);
+            uniqueContacts.push(contact);
+        }
+    }
+
+    userContacts = uniqueContacts;
     updateUserList(); // Обновляем интерфейс
 });
 
