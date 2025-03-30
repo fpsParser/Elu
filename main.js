@@ -1,4 +1,38 @@
 const { app, BrowserWindow, Menu } = require('electron');
+const { autoUpdater } = require("electron-updater");
+
+// Включить логгирование (для отладки)
+autoUpdater.logger = require("electron-log");
+autoUpdater.logger.transports.file.level = "info";
+
+// Проверять обновления при старте
+app.whenReady().then(() => {
+  autoUpdater.checkForUpdatesAndNotify();
+});
+
+// Обработчики событий
+autoUpdater.on('update-available', () => {
+  console.log('Обновление доступно!');
+});
+
+autoUpdater.on('download-progress', (progress) => {
+  console.log(`Скачано: ${Math.floor(progress.percent)}%`);
+});
+
+autoUpdater.on('update-downloaded', () => {
+  // Показываем диалоговое окно
+  dialog.showMessageBox({
+    type: 'info',
+    title: 'Обновление готово',
+    message: 'Перезапустите приложение для применения обновления.',
+    buttons: ['Перезапустить', 'Позже']
+  }).then((result) => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
+
 const path = require('path');
 
 function createWindow() {
