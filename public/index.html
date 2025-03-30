@@ -43,32 +43,6 @@
         }
 
 
-#update-status {
-    background: #2d2d2d;
-    padding: 12px;
-    border-radius: 6px;
-    margin: 10px 0;
-}
-
-#update-message {
-    color: #d1d1d1;
-    font-size: 14px;
-}
-
-#install-button {
-  background: #28a745;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
-#install-button:hover {
-  background: #218838;
-}
-
 .user-item.unread {
     background-color: #2e2e2e;
     border-left: 4px solid #28a745;
@@ -889,25 +863,7 @@ function selectUser(user) {
 <div class="settings-content">
     <button onclick="changeUsername()">Изменить ник</button>
     <button onclick="changePin()">Изменить пин-код</button>
-
-    <!-- Блок обновлений -->
-    <div id="update-section">
-  <h3>Обновления</h3>
-  <div id="update-status">
-    <div id="update-message">Нажмите "Проверить"</div>
-    <div id="update-progress">
-      <div style="height: 4px; background: #3a3a3a;">
-        <div id="progress-bar" style="height: 100%; width: 0%;"></div>
-      </div>
-    </div>
-    <button id="install-button" onclick="installUpdate()" style="display: none;">
-      Установить обновление
-    </button>
-  </div>
-  <button onclick="checkForUpdates()">Проверить обновления</button>
-</div>
-
-    <!-- Логотип и версия -->
+    
     <div class="logo-animation">
         <pre class="ascii-logo">
 ███████╗██╗░░░░░██╗░░░██╗
@@ -916,8 +872,19 @@ function selectUser(user) {
 ██╔══╝░░██║░░░░░██║░░░██║
 ███████╗███████╗╚██████╔╝
 ╚══════╝╚══════╝░╚═════╝░</pre>
-        <div class="version-text">v1.0.4</div>
+        <div class="version-text">v1.0.2</div>
     </div>
+
+<div id="update-status" style="display: none; position: fixed; bottom: 20px; right: 20px; 
+      background: #28a745; color: white; padding: 15px; border-radius: 5px; z-index: 1000;
+      max-width: 300px; box-shadow: 0 0 10px rgba(0,0,0,0.2);">
+  <div id="update-message" style="font-weight: bold;"></div>
+  <div id="update-progress" style="margin-top: 8px;">
+    <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;">
+      <div id="progress-bar" style="height: 100%; background: white; border-radius: 2px; width: 0%;"></div>
+    </div>
+  </div>
+</div>
 
     <button id="logout-btn" onclick="logout()">Выйти</button>
 </div>
@@ -1202,63 +1169,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 5000);
     }
   });
-
-// Проверка обновлений
-let updateCheckTimeout;
-
-function checkForUpdates() {
-  const updateStatus = document.getElementById('update-status');
-  const updateMessage = document.getElementById('update-message');
-  const progressBar = document.getElementById('progress-bar');
-  const installButton = document.getElementById('install-button');
-
-  updateStatus.style.display = 'block';
-  updateMessage.textContent = 'Проверка обновлений...';
-  progressBar.style.width = '0%';
-  installButton.style.display = 'none';
-
-  if (updateCheckTimeout) clearTimeout(updateCheckTimeout);
-  
-  updateCheckTimeout = setTimeout(() => {
-    updateMessage.textContent = 'Сервер не отвечает';
-  }, 8000);
-
-  if (window.electronAPI) {
-    window.electronAPI.checkUpdates();
-  } else {
-    updateMessage.textContent = 'Ошибка: API недоступен (перезагрузите приложение)';
-    clearTimeout(updateCheckTimeout);
-  }
-}
-
-function installUpdate() {
-  if (window.electronAPI) {
-    window.electronAPI.installUpdate();
-  }
-}
-
-// Обработчик статусов
-if (window.electronAPI) {
-  window.electronAPI.onUpdateStatus((event, data) => {
-    const updateMessage = document.getElementById('update-message');
-    const progressBar = document.getElementById('progress-bar');
-    const installButton = document.getElementById('install-button');
-
-    updateMessage.textContent = data.message;
-    
-    if (data.progress !== null) {
-      progressBar.style.width = `${data.progress}%`;
-    }
-
-    if (data.readyToInstall) {
-      installButton.style.display = 'block';
-    }
-
-    clearTimeout(updateCheckTimeout);
-  });
-} else {
-  console.error('Electron API не загружен');
-}
 
     </script>
 </body>
