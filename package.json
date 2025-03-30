@@ -1,12 +1,14 @@
 {
   "name": "elu",
-  "version": "1.0.0",
+  "version": "1.0.0",  
   "description": "Личные сообщения",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "server": "node server.js",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    
+    "deploy": "electron-builder -w -p always"
   },
   "dependencies": {
     "archiver": "^7.0.1",
@@ -18,16 +20,25 @@
   "devDependencies": {
     "electron": "^28.1.0",
     "electron-builder": "^24.13.3",
-    "electron-packager": "^17.1.2"
+    "electron-packager": "^17.1.2",
+    
+    "electron-updater": "^6.1.7",
+    "electron-log": "^5.0.1"
   },
   "build": {
     "productName": "Elu",
-    "appId": "com.example.my-chat-app",
+    "appId": "com.elu.app",
+    "publish": {  
+      "provider": "github",
+      "owner": "fpsParser",
+      "repo": "Elu"
+    },
     "directories": {
       "output": "dist"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "icon.ico"  
     },
     "nsis": {
       "oneClick": false,
