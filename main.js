@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu } = require('electron');
+const { dialog } = require('electron');
 const { autoUpdater } = require("electron-updater");
 
 // Включить логгирование (для отладки)
