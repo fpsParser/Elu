@@ -9,6 +9,7 @@
     "build": "electron-builder"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "express": "^4.21.2",
     "firebase": "^10.7.0",
     "mongoose": "^8.0.0",

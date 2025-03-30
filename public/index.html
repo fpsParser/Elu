@@ -640,14 +640,12 @@
         document.getElementById('back-button').style.cursor = 'pointer';
         let userContacts = [];
 
-async function loadContacts() {
+ async function loadContacts() {
     const username = localStorage.getItem('username');
     if (!username) {
         console.error('Имя пользователя не найдено в localStorage');
         return;
     }
-
-    console.log('Текущий пользователь:', username); // Добавь этот console.log
 
     try {
         const response = await fetch(`${serverUrl}/get-contacts`, {
@@ -659,10 +657,9 @@ async function loadContacts() {
         });
 
         const data = await response.json();
-        console.log('Контакты:', data);
         if (data.success) {
-            userContacts = data.contacts; // Обновляем список контактов
-            updateUserList(); // Обновляем интерфейс
+            userContacts = data.contacts;
+            updateUserList();
         } else {
             console.error('Ошибка при загрузке контактов:', data.message);
         }
@@ -791,7 +788,7 @@ function updateUserList() {
     }
 }
 
-async function selectUser(user) {
+function selectUser(user) {
     // Сбрасываем счетчик непрочитанных сообщений (без ожидания)
     fetch(`${serverUrl}/reset-unread`, {
         method: 'POST',
@@ -802,6 +799,8 @@ async function selectUser(user) {
     }).then(() => {
         // Обновляем счетчик в интерфейсе
         updateContactUnreadCount(user, 0);
+        // После сброса счетчика перезагружаем контакты
+        loadContacts();
     });
 
     // Обновляем текущего пользователя
@@ -853,7 +852,10 @@ async function selectUser(user) {
     userItems.forEach(item => item.classList.remove('selected'));
 
     if (user !== SETTINGS_USER) {
-        const selectedUserItem = Array.from(userItems).find(item => item.textContent.includes(user));
+        const selectedUserItem = Array.from(userItems).find(item => {
+            const usernameSpan = item.querySelector('span:not(.unread-count)');
+            return usernameSpan && usernameSpan.textContent === user;
+        });
         if (selectedUserItem) {
             selectedUserItem.classList.add('selected');
         }
@@ -985,20 +987,25 @@ async function loadMessages(user, limit = 50) {
 
 socket.on('private-message', (data) => {
     if (data.from === currentChatUser) {
+        // Если сообщение в текущем чате - просто отображаем
         const messagesElement = document.getElementById('messages');
         const newMessage = document.createElement('div');
         newMessage.className = `message other`;
         newMessage.textContent = data.message;
         messagesElement.appendChild(newMessage);
-
         messagesElement.scrollTop = messagesElement.scrollHeight;
+        
+        // Сбрасываем счетчик на сервере
+        fetch(`${serverUrl}/reset-unread`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, contact: data.from }),
+        });
     } else {
-        if (!userContacts.includes(data.from)) {
-            userContacts.push(data.from);
-            updateUserList();
-        }
-        // Обновляем счетчик непрочитанных сообщений
-        updateContactUnreadCount(data.from, (userContacts.find(contact => contact.username === data.from)?.unreadCount || 0) + 1);
+        // Обновляем список контактов
+        loadContacts();
     }
 });
 
@@ -1073,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-		
+
     </script>
 </body>
 </html>
