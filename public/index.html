@@ -579,6 +579,48 @@
                 height: 16px;
             }
         }
+		
+.logo-animation {
+    margin: 20px 0;
+    text-align: center;
+    opacity: 0;
+    animation: floatIn 0.8s ease-out forwards;
+}
+
+.ascii-logo {
+    color: #28a745;
+    font-family: 'Courier New', monospace;
+    font-size: 11px; /* Было 10px (+10%) */
+    line-height: 1.3; /* Подстроил межстрочный интервал */
+    margin: 0;
+    text-shadow: 0 0 6px rgba(40, 167, 69, 0.3);
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.1));
+    animation: floating 3.5s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+.version-text {
+    color: #6c757d;
+    font-size: 10.5px; /* Было 10px (+5%) */
+    margin-top: 6px; /* Увеличил отступ */
+    font-family: Arial, sans-serif;
+    /* Осталось без анимации */
+}
+
+@keyframes floatIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 0.7; transform: translateY(0); }
+}
+
+@keyframes floating {
+    0%, 100% { 
+        transform: translateY(0) scale(1); 
+    }
+    50% { 
+        transform: translateY(-4px) scale(1.02); /* Лёгкое увеличение при подъёме */
+    }
+}
+		
     </style>
 </head>
 <body>
@@ -818,13 +860,23 @@ function selectUser(user) {
         chatTitle.textContent = 'Настройки';
         chatTitle.style.display = 'block';
         document.getElementById('messages').innerHTML = `
-            <div class="settings-content">
-                <div>
-                    <button onclick="changeUsername()">Изменить ник</button>
-                    <button onclick="changePin()">Изменить пин-код</button>
-                    <button onclick="logout()" style="background-color: #a33a3a; margin-top: 20px;">Выйти</button>
-                </div>
-            </div>
+<div class="settings-content">
+    <button onclick="changeUsername()">Изменить ник</button>
+    <button onclick="changePin()">Изменить пин-код</button>
+    
+    <div class="logo-animation">
+        <pre class="ascii-logo">███████╗██╗░░░░░██╗░░░██╗
+██╔════╝██║░░░░░██║░░░██║
+█████╗░░██║░░░░░██║░░░██║
+██╔══╝░░██║░░░░░██║░░░██║
+███████╗███████╗╚██████╔╝
+╚══════╝╚══════╝░╚═════╝░</pre>
+        <div class="version-text">v1.0</div>
+    </div>
+
+    <button id="logout-btn" onclick="logout()">Выйти</button>
+</div>
+
         `;
         document.getElementById('messageInput').style.display = 'none';
 

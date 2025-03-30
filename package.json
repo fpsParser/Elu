@@ -1,5 +1,5 @@
 {
-  "name": "my-chat-app",
+  "name": "elu",
   "version": "1.0.0",
   "description": "Личные сообщения",
   "main": "main.js",
@@ -21,7 +21,7 @@
     "electron-packager": "^17.1.2"
   },
   "build": {
-    "productName": "My Chat App",
+    "productName": "Elu",
     "appId": "com.example.my-chat-app",
     "directories": {
       "output": "dist"
