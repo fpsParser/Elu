@@ -42,20 +42,19 @@
             }
         }
 
+        .user-item.unread {
+            background-color: #2e2e2e;
+            border-left: 4px solid #28a745;
+        }
 
-.user-item.unread {
-    background-color: #2e2e2e;
-    border-left: 4px solid #28a745;
-}
-
-.unread-count {
-    background-color: #28a745;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
-    margin-left: auto;
-}
+        .unread-count {
+            background-color: #28a745;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: auto;
+        }
 
         #search-container {
             display: flex;
@@ -204,61 +203,62 @@
             color: #d1d1d1;
         }
 
-#messages {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    scrollbar-gutter: stable; /* Резервируем место для скроллбара */
-}
-#messageInput {
-    display: flex;
-    align-items: stretch;
-    padding: 10px;
-    background-color: #1e1e1e;
-    border-radius: 5px;
-}
+        #messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            scrollbar-gutter: stable;
+        }
 
-#message {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #333;
-    border-radius: 5px 0 0 5px;
-    background-color: #2d2d2d;
-    color: #ffffff;
-    outline: none;
-    height: 32px;
-    box-sizing: border-box;
-    margin: 0;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
+        #messageInput {
+            display: flex;
+            align-items: stretch;
+            padding: 10px;
+            background-color: #1e1e1e;
+            border-radius: 5px;
+        }
 
-#message:focus {
-    border-color: #28a745;
-    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
-}
+        #message {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px 0 0 5px;
+            background-color: #2d2d2d;
+            color: #ffffff;
+            outline: none;
+            height: 32px;
+            box-sizing: border-box;
+            margin: 0;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
 
-#send-button {
-    width: 40px;
-    height: 32px;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    background-color: #333;
-    color: #ffffff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    box-sizing: border-box;
-    margin: 0;
-    transition: background-color 0.2s ease;
-}
+        #message:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+        }
 
-#send-button:hover {
-    background-color: #3a3a3a;
-}
+        #send-button {
+            width: 40px;
+            height: 32px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #333;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
+            margin: 0;
+            transition: background-color 0.2s ease;
+        }
+
+        #send-button:hover {
+            background-color: #3a3a3a;
+        }
 
         #logout-btn {
             background-color: #a33a3a;
@@ -292,7 +292,7 @@
         .user-list {
             margin-top: 10px;
             overflow-y: auto;
-			overflow-x: hidden; /* Убираем горизонтальную прокрутку */
+            overflow-x: hidden;
             flex: 1;
             padding-right: 20px;
             scrollbar-gutter: stable;
@@ -323,18 +323,18 @@
             line-height: 1;
         }
 
-.user-item {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
-    border-bottom: none;
-    transition: background-color 0.2s ease;
-    border-radius: 6px;
-    margin-bottom: 5px; /* Отступ между контактами */
-    width: calc(100% - 6px); /* Удлиняем контакты по горизонтали, учитывая ширину скроллбара */
-}
+        .user-item {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: none;
+            transition: background-color 0.2s ease;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            width: calc(100% - 6px);
+        }
 
         .user-item:hover {
             background-color: #2e2e2e;
@@ -489,31 +489,27 @@
             border-bottom: 2px solid #242424;
         }
 
-/* Скрываем скроллбар по умолчанию */
-.scroll-container {
-    scrollbar-width: none; /* Для Firefox */
-    -ms-overflow-style: none; /* Для IE и Edge */
-    overflow-y: hidden; /* Скрываем скроллбар по умолчанию */
-}
+        .scroll-container {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            overflow-y: hidden;
+        }
 
-/* Скрываем скроллбар в WebKit-браузерах (Chrome, Safari) */
-.scroll-container::-webkit-scrollbar {
-    width: 4px; /* Ширина скроллбара */
-    background-color: transparent; /* Прозрачный фон */
-}
+        .scroll-container::-webkit-scrollbar {
+            width: 4px;
+            background-color: transparent;
+        }
 
-/* Стили для "ползунка" скроллбара */
-.scroll-container::-webkit-scrollbar-thumb {
-    background-color: rgba(28, 116, 48, 0.6); /* Цвет ползунка с прозрачностью */
-    border-radius: 4px; /* Закругление углов */
-    opacity: 0; /* По умолчанию скроллбар невидим */
-    transition: opacity 0.3s ease; /* Плавное появление */
-}
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: rgba(28, 116, 48, 0.6);
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-/* При наведении на контейнер показываем скроллбар */
-.scroll-container:hover::-webkit-scrollbar-thumb {
-    opacity: 1; /* Скроллбар становится видимым */
-}
+        .scroll-container:hover::-webkit-scrollbar-thumb {
+            opacity: 1;
+        }
 
         #back-button {
             width: 40px;
@@ -579,48 +575,78 @@
                 height: 16px;
             }
         }
-		
-.logo-animation {
-    margin: 20px 0;
-    text-align: center;
-    opacity: 0;
-    animation: floatIn 0.8s ease-out forwards;
-}
+        
+        .logo-animation {
+            margin: 20px 0;
+            text-align: center;
+            opacity: 0;
+            animation: floatIn 0.8s ease-out forwards;
+        }
 
-.ascii-logo {
-    color: #28a745;
-    font-family: 'Courier New', monospace;
-    font-size: 11px; /* Было 10px (+10%) */
-    line-height: 1.3; /* Подстроил межстрочный интервал */
-    margin: 0;
-    text-shadow: 0 0 6px rgba(40, 167, 69, 0.3);
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.1));
-    animation: floating 3.5s ease-in-out infinite;
-    animation-delay: 1s;
-}
+        .ascii-logo {
+            color: #28a745;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.3;
+            margin: 0;
+            text-shadow: 0 0 6px rgba(40, 167, 69, 0.3);
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.1));
+            animation: floating 3.5s ease-in-out infinite;
+            animation-delay: 1s;
+        }
 
-.version-text {
-    color: #6c757d;
-    font-size: 10.5px; /* Было 10px (+5%) */
-    margin-top: 6px; /* Увеличил отступ */
-    font-family: Arial, sans-serif;
-    /* Осталось без анимации */
-}
+        .version-text {
+            color: #6c757d;
+            font-size: 10.5px;
+            margin-top: 6px;
+            font-family: Arial, sans-serif;
+        }
 
-@keyframes floatIn {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 0.7; transform: translateY(0); }
-}
+        @keyframes floatIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 0.7; transform: translateY(0); }
+        }
 
-@keyframes floating {
-    0%, 100% { 
-        transform: translateY(0) scale(1); 
-    }
-    50% { 
-        transform: translateY(-4px) scale(1.02); /* Лёгкое увеличение при подъёме */
-    }
-}
-		
+        @keyframes floating {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+            }
+            50% { 
+                transform: translateY(-4px) scale(1.02);
+            }
+        }
+
+        /* Стили для обновлений */
+        #update-status {
+            background: #2d2d2d;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        #update-message {
+            color: #d1d1d1;
+            font-size: 14px;
+        }
+
+        #update-progress {
+            margin-bottom: 10px;
+        }
+
+        #install-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            display: none;
+        }
+
+        #install-button:hover {
+            background: #218838;
+        }
     </style>
 </head>
 <body>
@@ -659,11 +685,11 @@
         </div>
         <ul class="scroll-container" id="messages"></ul>
         <div id="messageInput">
-    <input id="message" type="text" placeholder="Введите сообщение">
-    <button id="send-button" onclick="sendMessage()">
-  <img src="images/send-icon.png" alt="Отправить" width="24" height="24">
-</button>
-		</div>
+            <input id="message" type="text" placeholder="Введите сообщение">
+            <button id="send-button" onclick="sendMessage()">
+                <img src="images/send-icon.png" alt="Отправить" width="24" height="24">
+            </button>
+        </div>
     </div>
 
     <script>
@@ -682,33 +708,33 @@
         document.getElementById('back-button').style.cursor = 'pointer';
         let userContacts = [];
 
- async function loadContacts() {
-    const username = localStorage.getItem('username');
-    if (!username) {
-        console.error('Имя пользователя не найдено в localStorage');
-        return;
-    }
+        async function loadContacts() {
+            const username = localStorage.getItem('username');
+            if (!username) {
+                console.error('Имя пользователя не найдено в localStorage');
+                return;
+            }
 
-    try {
-        const response = await fetch(`${serverUrl}/get-contacts`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username }),
-        });
+            try {
+                const response = await fetch(`${serverUrl}/get-contacts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username }),
+                });
 
-        const data = await response.json();
-        if (data.success) {
-            userContacts = data.contacts;
-            updateUserList();
-        } else {
-            console.error('Ошибка при загрузке контактов:', data.message);
+                const data = await response.json();
+                if (data.success) {
+                    userContacts = data.contacts;
+                    updateUserList();
+                } else {
+                    console.error('Ошибка при загрузке контактов:', data.message);
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке контактов:', error);
+            }
         }
-    } catch (error) {
-        console.error('Ошибка при загрузке контактов:', error);
-    }
-}
 
         loadContacts();
 
@@ -757,202 +783,185 @@
             });
         }
 
-function getInitials(username) {
-    if (!username || typeof username !== 'string') {
-        console.error('Некорректное имя пользователя:', username);
-        return '?';
-    }
-    const parts = username.split(' ');
-    return parts.map(part => part[0]).join('').toUpperCase();
-}
-
-function getColor(username) {
-    if (!username || typeof username !== 'string') {
-        console.error('Некорректное имя пользователя:', username);
-        return '#4a4a4a'; // Возвращаем цвет по умолчанию
-    }
-    const colors = [
-        '#4a4a4a', '#3d3d3d', '#1c1f33', '#1a535c', '#2d5d4e', '#4a306d', '#5e2c5e', '#3a1c1c', '#1e3a5f', '#5a5a5a'
-    ];
-    const hash = username.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
-    return colors[hash % colors.length];
-}
-
-async function addUser(user) {
-    // Проверяем, что контакт ещё не добавлен
-    if (!userContacts.some(contact => contact.username === user)) {
-        const response = await fetch(`${serverUrl}/add-contact`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, contact: user }),
-        });
-
-        const data = await response.json();
-        if (data.success) {
-            // Очищаем поле поиска и результаты
-            document.getElementById('search').value = '';
-            document.getElementById('search-results').innerHTML = '';
-
-            // Не обновляем список контактов вручную, ждём обновления через WebSocket
-        }
-    } else {
-        console.log('Пользователь уже добавлен:', user);
-    }
-}
-
-function updateUserList() {
-    const userListElement = document.getElementById('user-list');
-    if (userListElement) {
-        userListElement.innerHTML = userContacts.map(contact => {
-            // Проверяем, что contact — это объект и у него есть поле username
-            if (!contact || typeof contact !== 'object' || !contact.username || typeof contact.username !== 'string') {
-                console.error('Некорректный контакт:', contact);
-                return ''; // Пропускаем некорректные данные
+        function getInitials(username) {
+            if (!username || typeof username !== 'string') {
+                console.error('Некорректное имя пользователя:', username);
+                return '?';
             }
+            const parts = username.split(' ');
+            return parts.map(part => part[0]).join('').toUpperCase();
+        }
 
-            const username = contact.username; // Извлекаем username из объекта
-            const unreadCount = contact.unreadCount || 0; // Извлекаем unreadCount (если есть)
+        function getColor(username) {
+            if (!username || typeof username !== 'string') {
+                console.error('Некорректное имя пользователя:', username);
+                return '#4a4a4a';
+            }
+            const colors = [
+                '#4a4a4a', '#3d3d3d', '#1c1f33', '#1a535c', '#2d5d4e', '#4a306d', '#5e2c5e', '#3a1c1c', '#1e3a5f', '#5a5a5a'
+            ];
+            const hash = username.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+            return colors[hash % colors.length];
+        }
 
-            return `
-                <div class="user-item ${unreadCount > 0 ? 'unread' : ''}" onclick="selectUser('${username}')">
-                    <div style="background: ${getColor(username)};">
-                        <span>${getInitials(username)}</span>
-                    </div>
-                    <span>${username}</span>
-                    ${unreadCount > 0 ? `<span class="unread-count">${unreadCount}</span>` : ''}
-                </div>
-            `;
-        }).join('');
-    } else {
-        console.error('Элемент user-list не найден');
-    }
-}
+        async function addUser(user) {
+            if (!userContacts.some(contact => contact.username === user)) {
+                const response = await fetch(`${serverUrl}/add-contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, contact: user }),
+                });
 
-function selectUser(user) {
-    // Сбрасываем счетчик непрочитанных сообщений (без ожидания)
-    fetch(`${serverUrl}/reset-unread`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, contact: user }),
-    }).then(() => {
-        // Обновляем счетчик в интерфейсе
-        updateContactUnreadCount(user, 0);
-        // После сброса счетчика перезагружаем контакты
-        loadContacts();
-    });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('search').value = '';
+                    document.getElementById('search-results').innerHTML = '';
+                }
+            } else {
+                console.log('Пользователь уже добавлен:', user);
+            }
+        }
 
-    // Обновляем текущего пользователя
-    currentChatUser = user;
+        function updateUserList() {
+            const userListElement = document.getElementById('user-list');
+            if (userListElement) {
+                userListElement.innerHTML = userContacts.map(contact => {
+                    if (!contact || typeof contact !== 'object' || !contact.username || typeof contact.username !== 'string') {
+                        console.error('Некорректный контакт:', contact);
+                        return '';
+                    }
 
-    // Показываем кнопку "Назад"
-    document.getElementById('back-button').style.display = 'block';
+                    const username = contact.username;
+                    const unreadCount = contact.unreadCount || 0;
 
-    const chatAvatar = document.getElementById('chat-avatar');
-    const chatUsername = document.getElementById('chat-username');
-    const chatTitle = document.getElementById('chat-title');
+                    return `
+                        <div class="user-item ${unreadCount > 0 ? 'unread' : ''}" onclick="selectUser('${username}')">
+                            <div style="background: ${getColor(username)};">
+                                <span>${getInitials(username)}</span>
+                            </div>
+                            <span>${username}</span>
+                            ${unreadCount > 0 ? `<span class="unread-count">${unreadCount}</span>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                console.error('Элемент user-list не найден');
+            }
+        }
 
-    if (user === SETTINGS_USER) {
-        // Если это настройки, показываем соответствующий интерфейс
-        chatTitle.textContent = 'Настройки';
-        chatTitle.style.display = 'block';
-        document.getElementById('messages').innerHTML = `
-<div class="settings-content">
-    <button onclick="changeUsername()">Изменить ник</button>
-    <button onclick="changePin()">Изменить пин-код</button>
-    
-    <div class="logo-animation">
-        <pre class="ascii-logo">
+        function selectUser(user) {
+            fetch(`${serverUrl}/reset-unread`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, contact: user }),
+            }).then(() => {
+                updateContactUnreadCount(user, 0);
+                loadContacts();
+            });
+
+            currentChatUser = user;
+
+            document.getElementById('back-button').style.display = 'block';
+
+            const chatAvatar = document.getElementById('chat-avatar');
+            const chatUsername = document.getElementById('chat-username');
+            const chatTitle = document.getElementById('chat-title');
+
+            if (user === SETTINGS_USER) {
+                chatTitle.textContent = 'Настройки';
+                chatTitle.style.display = 'block';
+                document.getElementById('messages').innerHTML = `
+                    <div class="settings-content">
+                        <button onclick="changeUsername()">Изменить ник</button>
+                        <button onclick="changePin()">Изменить пин-код</button>
+                        
+                        <div id="update-status" style="display: none;">
+                            <div id="update-message"></div>
+                            <div id="update-progress" style="margin-bottom: 10px;">
+                                <div style="height: 4px; background: #3a3a3a; border-radius: 2px;">
+                                    <div id="progress-bar" style="height: 100%; background: #28a745; border-radius: 2px; width: 0%;"></div>
+                                </div>
+                            </div>
+                            <button id="install-button" onclick="installUpdate()">Установить обновление</button>
+                        </div>
+
+                        <div class="logo-animation">
+                            <pre class="ascii-logo">
 ███████╗██╗░░░░░██╗░░░██╗
 ██╔════╝██║░░░░░██║░░░██║
 █████╗░░██║░░░░░██║░░░██║
 ██╔══╝░░██║░░░░░██║░░░██║
 ███████╗███████╗╚██████╔╝
 ╚══════╝╚══════╝░╚═════╝░</pre>
-        <div class="version-text">v1.0.2</div>
-    </div>
+                            <div class="version-text">v1.0.2</div>
+                        </div>
 
-<div id="update-status" style="display: none; position: fixed; bottom: 20px; right: 20px; 
-      background: #28a745; color: white; padding: 15px; border-radius: 5px; z-index: 1000;
-      max-width: 300px; box-shadow: 0 0 10px rgba(0,0,0,0.2);">
-  <div id="update-message" style="font-weight: bold;"></div>
-  <div id="update-progress" style="margin-top: 8px;">
-    <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px;">
-      <div id="progress-bar" style="height: 100%; background: white; border-radius: 2px; width: 0%;"></div>
-    </div>
-  </div>
-</div>
+                        <button id="logout-btn" onclick="logout()">Выйти</button>
+                    </div>
+                `;
+                document.getElementById('messageInput').style.display = 'none';
 
-    <button id="logout-btn" onclick="logout()">Выйти</button>
-</div>
-
-        `;
-        document.getElementById('messageInput').style.display = 'none';
-
-        chatAvatar.style.display = 'none';
-        chatUsername.style.display = 'none';
-    } else {
-        // Если это обычный контакт, показываем чат
-        chatTitle.style.display = 'none';
-        document.getElementById('messages').innerHTML = '';
-        document.getElementById('messageInput').style.display = 'flex';
-
-        chatAvatar.innerHTML = `<span>${getInitials(user)}</span>`;
-        chatAvatar.style.backgroundColor = getColor(user);
-        chatUsername.textContent = user;
-
-        chatAvatar.style.display = 'flex';
-        chatUsername.style.display = 'block';
-
-        // Загружаем сообщения для выбранного пользователя
-        loadMessages(user);
-    }
-
-    // Обновляем выделение контакта
-    const userItems = document.querySelectorAll('.user-item');
-    userItems.forEach(item => item.classList.remove('selected'));
-
-    if (user !== SETTINGS_USER) {
-        const selectedUserItem = Array.from(userItems).find(item => {
-            const usernameSpan = item.querySelector('span:not(.unread-count)');
-            return usernameSpan && usernameSpan.textContent === user;
-        });
-        if (selectedUserItem) {
-            selectedUserItem.classList.add('selected');
-        }
-    }
-
-    // Если экран маленький, скрываем боковую панель
-    if (window.innerWidth <= 572) {
-        document.getElementById('sidebar').classList.remove('active');
-        document.getElementById('chat').classList.remove('hide');
-    }
-}
-
-function updateContactUnreadCount(contactUsername, unreadCount) {
-    const userItems = document.querySelectorAll('.user-item');
-    userItems.forEach(item => {
-        if (item.textContent.includes(contactUsername)) {
-            const unreadCountElement = item.querySelector('.unread-count');
-            if (unreadCount > 0) {
-                if (unreadCountElement) {
-                    unreadCountElement.textContent = unreadCount;
-                } else {
-                    item.innerHTML += `<span class="unread-count">${unreadCount}</span>`;
-                }
-                item.classList.add('unread');
+                chatAvatar.style.display = 'none';
+                chatUsername.style.display = 'none';
             } else {
-                if (unreadCountElement) {
-                    unreadCountElement.remove();
+                chatTitle.style.display = 'none';
+                document.getElementById('messages').innerHTML = '';
+                document.getElementById('messageInput').style.display = 'flex';
+
+                chatAvatar.innerHTML = `<span>${getInitials(user)}</span>`;
+                chatAvatar.style.backgroundColor = getColor(user);
+                chatUsername.textContent = user;
+
+                chatAvatar.style.display = 'flex';
+                chatUsername.style.display = 'block';
+
+                loadMessages(user);
+            }
+
+            const userItems = document.querySelectorAll('.user-item');
+            userItems.forEach(item => item.classList.remove('selected'));
+
+            if (user !== SETTINGS_USER) {
+                const selectedUserItem = Array.from(userItems).find(item => {
+                    const usernameSpan = item.querySelector('span:not(.unread-count)');
+                    return usernameSpan && usernameSpan.textContent === user;
+                });
+                if (selectedUserItem) {
+                    selectedUserItem.classList.add('selected');
                 }
-                item.classList.remove('unread');
+            }
+
+            if (window.innerWidth <= 572) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('chat').classList.remove('hide');
             }
         }
-    });
-}
+
+        function updateContactUnreadCount(contactUsername, unreadCount) {
+            const userItems = document.querySelectorAll('.user-item');
+            userItems.forEach(item => {
+                if (item.textContent.includes(contactUsername)) {
+                    const unreadCountElement = item.querySelector('.unread-count');
+                    if (unreadCount > 0) {
+                        if (unreadCountElement) {
+                            unreadCountElement.textContent = unreadCount;
+                        } else {
+                            item.innerHTML += `<span class="unread-count">${unreadCount}</span>`;
+                        }
+                        item.classList.add('unread');
+                    } else {
+                        if (unreadCountElement) {
+                            unreadCountElement.remove();
+                        }
+                        item.classList.remove('unread');
+                    }
+                }
+            });
+        }
 
         function toggleSettings() {
             selectUser(SETTINGS_USER);
@@ -981,27 +990,27 @@ function updateContactUnreadCount(contactUsername, unreadCount) {
             userItems.forEach(item => item.classList.remove('selected'));
         }
 
-async function loadMessages(user, limit = 50) {
-    const messagesElement = document.getElementById('messages');
+        async function loadMessages(user, limit = 50) {
+            const messagesElement = document.getElementById('messages');
 
-    const response = await fetch(`${serverUrl}/get-messages`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, contact: user, limit }),
-    });
+            const response = await fetch(`${serverUrl}/get-messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, contact: user, limit }),
+            });
 
-    const data = await response.json();
-    if (data.success) {
-        messagesElement.innerHTML = data.messages.map(msg => `
-            <div class="message ${msg.from === username ? 'me' : 'other'}">
-                ${msg.message}
-            </div>
-        `).join('');
-        messagesElement.scrollTop = messagesElement.scrollHeight;
-    }
-}
+            const data = await response.json();
+            if (data.success) {
+                messagesElement.innerHTML = data.messages.map(msg => `
+                    <div class="message ${msg.from === username ? 'me' : 'other'}">
+                        ${msg.message}
+                    </div>
+                `).join('');
+                messagesElement.scrollTop = messagesElement.scrollHeight;
+            }
+        }
 
         function sendMessage() {
             const message = document.getElementById('message').value;
@@ -1049,127 +1058,118 @@ async function loadMessages(user, limit = 50) {
             }
         });
 
-socket.on('private-message', (data) => {
-    if (data.from === currentChatUser) {
-        // Если сообщение в текущем чате - просто отображаем
-        const messagesElement = document.getElementById('messages');
-        const newMessage = document.createElement('div');
-        newMessage.className = `message other`;
-        newMessage.textContent = data.message;
-        messagesElement.appendChild(newMessage);
-        messagesElement.scrollTop = messagesElement.scrollHeight;
-        
-        // Сбрасываем счетчик на сервере
-        fetch(`${serverUrl}/reset-unread`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, contact: data.from }),
+        socket.on('private-message', (data) => {
+            if (data.from === currentChatUser) {
+                const messagesElement = document.getElementById('messages');
+                const newMessage = document.createElement('div');
+                newMessage.className = `message other`;
+                newMessage.textContent = data.message;
+                messagesElement.appendChild(newMessage);
+                messagesElement.scrollTop = messagesElement.scrollHeight;
+                
+                fetch(`${serverUrl}/reset-unread`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, contact: data.from }),
+                });
+            } else {
+                loadContacts();
+            }
         });
-    } else {
-        // Обновляем список контактов
-        loadContacts();
-    }
-});
 
-socket.on('update-contacts', (contacts) => {
-    // Обновляем список контактов, убирая дубликаты
-    userContacts = contacts.map(contact => ({
-        username: contact,
-        unreadCount: 0, // Можно добавить логику для unreadCount, если нужно
-    }));
+        socket.on('update-contacts', (contacts) => {
+            userContacts = contacts.map(contact => ({
+                username: contact,
+                unreadCount: 0,
+            }));
 
-    // Убираем дубликаты из списка
-    const uniqueContacts = [];
-    const seen = new Set();
-    for (const contact of userContacts) {
-        if (!seen.has(contact.username)) {
-            seen.add(contact.username);
-            uniqueContacts.push(contact);
-        }
-    }
+            const uniqueContacts = [];
+            const seen = new Set();
+            for (const contact of userContacts) {
+                if (!seen.has(contact.username)) {
+                    seen.add(contact.username);
+                    uniqueContacts.push(contact);
+                }
+            }
 
-    userContacts = uniqueContacts;
-    updateUserList(); // Обновляем интерфейс
-});
+            userContacts = uniqueContacts;
+            updateUserList();
+        });
 
         socket.emit('register-user', username);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const username = localStorage.getItem('username');
-    if (!username) {
-        window.location.href = './auth.html';
-    }
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = localStorage.getItem('username');
+            if (!username) {
+                window.location.href = './auth.html';
+            }
 
-    document.getElementById('username-display').textContent = username;
-    document.getElementById('back-button').style.cursor = 'pointer';
+            document.getElementById('username-display').textContent = username;
+            document.getElementById('back-button').style.cursor = 'pointer';
 
-    const initials = getInitials(username);
-    const color = getColor(username);
-    document.getElementById('avatar').style.background = color;
-    document.getElementById('avatar-initials').textContent = initials;
+            const initials = getInitials(username);
+            const color = getColor(username);
+            document.getElementById('avatar').style.background = color;
+            document.getElementById('avatar-initials').textContent = initials;
 
-    // Загружаем контакты при загрузке страницы
-    loadContacts();
+            loadContacts();
 
-    const selectedContact = localStorage.getItem('selectedContact');
-    if (selectedContact) {
-        selectUser(selectedContact);
-    } else {
-        document.getElementById('sidebar').classList.add('active');
-        document.getElementById('chat').classList.add('hide');
+            const selectedContact = localStorage.getItem('selectedContact');
+            if (selectedContact) {
+                selectUser(selectedContact);
+            } else {
+                document.getElementById('sidebar').classList.add('active');
+                document.getElementById('chat').classList.add('hide');
 
-        document.getElementById('back-button').style.display = 'none';
-        document.getElementById('chat-title').style.display = 'none';
-    }
-});
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    const scrollContainers = document.querySelectorAll('.scroll-container');
-
-    scrollContainers.forEach(container => {
-        // Показываем скроллбар при наведении на контейнер
-        container.addEventListener('mouseenter', () => {
-            container.style.overflowY = 'auto'; // Включаем скроллбар
-            container.style.setProperty('--scrollbar-opacity', '1'); // Плавное появление
+                document.getElementById('back-button').style.display = 'none';
+                document.getElementById('chat-title').style.display = 'none';
+            }
         });
 
-        // Скрываем скроллбар при уходе мыши с контейнера
-        container.addEventListener('mouseleave', () => {
-            container.style.setProperty('--scrollbar-opacity', '0'); // Мгновенное исчезновение
-            container.style.overflowY = 'hidden'; // Отключаем скроллбар
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollContainers = document.querySelectorAll('.scroll-container');
+
+            scrollContainers.forEach(container => {
+                container.addEventListener('mouseenter', () => {
+                    container.style.overflowY = 'auto';
+                    container.style.setProperty('--scrollbar-opacity', '1');
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    container.style.setProperty('--scrollbar-opacity', '0');
+                    container.style.overflowY = 'hidden';
+                });
+            });
         });
-    });
-});
 
-  const { ipcRenderer } = require('electron');
-  
-  ipcRenderer.on('update-status', (event, data) => {
-    const statusEl = document.getElementById('update-status');
-    const messageEl = document.getElementById('update-message');
-    const progressBar = document.getElementById('progress-bar');
-    
-    messageEl.textContent = data.message;
-    statusEl.style.display = 'block';
-    
-    if (data.progress !== null) {
-      progressBar.style.width = `${data.progress}%`;
-      document.getElementById('update-progress').style.display = 'block';
-    } else {
-      document.getElementById('update-progress').style.display = 'none';
-    }
-    
-    // Автоскрытие через 5 секунд для информационных сообщений
-    if (!data.message.includes('Загрузка') && !data.message.includes('Готово')) {
-      setTimeout(() => {
-        statusEl.style.display = 'none';
-      }, 5000);
-    }
-  });
+        const { ipcRenderer } = require('electron');
+        
+        ipcRenderer.on('update-status', (event, data) => {
+            const updateStatus = document.getElementById('update-status');
+            const updateMessage = document.getElementById('update-message');
+            const progressBar = document.getElementById('progress-bar');
+            const installButton = document.getElementById('install-button');
+            
+            if (data.message) {
+                updateMessage.textContent = data.message;
+                updateStatus.style.display = 'block';
+            }
+            
+            if (data.progress !== null) {
+                progressBar.style.width = `${data.progress}%`;
+            }
 
+            if (data.readyToInstall) {
+                installButton.style.display = 'block';
+            }
+        });
+
+        function installUpdate() {
+            const { ipcRenderer } = require('electron');
+            ipcRenderer.send('install-update');
+        }
     </script>
 </body>
 </html>
